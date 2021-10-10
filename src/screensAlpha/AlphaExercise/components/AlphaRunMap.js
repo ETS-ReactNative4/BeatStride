@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useRef,useEffect,useState} from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import MapView, { Polyline, Circle } from 'react-native-maps';
 
@@ -15,15 +15,58 @@ const AlphaRunMap = (props) => {
     const mapPositions = props.mapPositions;
     const currCoord = props.currCoord;
 
+    const [region,setRegion]=useState({
+        latitude: currCoord.latitude-0.0008,
+        longitude: currCoord.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+        });
+
+    /* Map Animation */
+    //mapViewRef use to animate object
+    const mapViewRef=useRef(null);
+
+    /**
+     * Animates to Specific region whenever currCoord/gpsMode Changes 
+     */
+    useEffect(()=>{
+        setRegion({
+            latitude: currCoord.latitude-0.0008,
+            longitude: currCoord.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+            })
+        if(props.gpsMode=="track"){
+            console.log('useEffect1 '+props.gpsMode)
+            console.log('useEffect1 '+region)
+            mapViewRef.current.animateToRegion(
+            region,200
+            )
+        }
+
+    },[currCoord,props.gpsMode])
+
+
     return (
         <View style={styles.componentContainer}>
             <MapView 
                 style={styles.map}
-                region={{
-                latitude: currCoord.latitude,
+                ref = {mapViewRef}
+
+                initialRegion={{
+                latitude: currCoord.latitude-0.0008,
                 longitude: currCoord.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
+                }}
+                onRegionChangeComplete={(region, gesture) => {
+                    //console.log('user move map')
+                    if(gesture.isGesture){
+                        props.setGpsMode("explore")
+                        console.log('user move map'+(props.gpsMode=="explore"))
+                    }else{
+                        console.log('animate move map '+gesture)
+                    }
                 }}
                 >
                 <Polyline
@@ -52,11 +95,11 @@ const AlphaRunMap = (props) => {
 const styles = StyleSheet.create({
     componentContainer:{
         width: width,
-        height: height * 0.7,
+        height: height * 0.73,
     },
     map: {
         width: width,
-        height: height * 0.7,
+        height: height * 0.73,
       },
 });
 

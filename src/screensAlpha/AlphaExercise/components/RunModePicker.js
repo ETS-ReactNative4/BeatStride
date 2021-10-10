@@ -74,13 +74,13 @@ const RunModePicker = () => {
             
             {/* <Text>Centered View</Text> */}
             {/* Start Button */}
-            <View style={{justifyContent: 'space-between'} }>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{justifyContent: 'space-between', width: width * 0.95, height: height * 0.2,} }>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: width * 0.95, height: height * 0.1-1,overflow:'hidden',}}>
                         <RumModePickerItem title={tile[0]} discription={activity} imagePNG={activityPNG} />
                         <RumModePickerItem title={tile[1]} discription={activityType} imagePNG={activityTypePNG}/>
                     </View>
 
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: width * 0.95, height: height * 0.1-1,overflow:'hidden',}}>
                         <RumModePickerItem title={tile[2]} discription={music} imagePNG={musicPNG}/>
                         <RumModePickerItem title={tile[3]} discription={audio} imagePNG={audioPNG}/>
                     </View>

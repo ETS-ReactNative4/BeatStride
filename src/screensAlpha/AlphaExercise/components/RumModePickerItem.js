@@ -48,19 +48,19 @@ const styles = StyleSheet.create({
     innercomponentContainer:{
         justifyContent: 'center', 
         backgroundColor:'#4F535C',//default
-        //backgroundColor:'red', 
+        //backgroundColor:'yellow', 
         paddingLeft: width * 0.7 * 0.02,
         alignSelf:'flex-start',
 
         flexDirection:'row',
         alignContent:'flex-start',
-        width: width * 0.475,
+        width: width * 0.475-1,
         height: height * 0.1, 
-
-        borderBottomWidth: 1,
-        borderRightWidth:1,
-        borderBottomColor:'#bfbfbf',
-        borderRightColor:'#bfbfbf',
+        overflow:'hidden'
+        //borderBottomWidth: 1,
+        //borderRightWidth:1,
+        //borderBottomColor:'#bfbfbf',
+        //borderRightColor:'#bfbfbf',
         //borderTopLeftRadius:10
     }, 
     innerTextContainer:{
