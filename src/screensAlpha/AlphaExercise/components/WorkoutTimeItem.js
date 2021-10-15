@@ -15,30 +15,23 @@ import moment from 'moment';
 
 const {width, height} = Dimensions.get("window")
 
-const HistoryItem = (props) => {
+const WorkoutTimeItem = (props) => {
     
-    const name=props.parkData.name;
-    const distance=props.parkData.distance.toFixed(1);
-    const photoref=props.parkData.photos[0].photo_reference;
-    const url  = 'https://maps.googleapis.com/maps/api/place/photo?'
-    const maxwidth = `maxwidth=400`;
-    const photorefField = `&photo_reference=${photoref}`;
-    const key = `&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ`;
-    const parkSearchUrl = url + maxwidth + photorefField +  key;
-    console.log(parkSearchUrl)
+    const name=props.name;
+    const imageSRC=props.imageSRC;
+    const discription=props.discription;
 
     return (
             <TouchableOpacity 
                 onPress={() => {props.setScrollToPage(0);
-                    //console.log("In History Park Item"+props.parkData.geometry.location.lat );
-                    props.setNavToCoord({latitude:props.parkData.geometry.location.lat,longitude:props.parkData.geometry.location.lng});                
+                    //console.log("In History Park Item"+props.parkData.geometry.location.lat );              
                 }}
                 // onLongPress={removeHistory}
             >   
                 <View style={styles.itemContainer}>
                     
                     <Image 
-                        source={{uri:parkSearchUrl}}
+                        source={imageSRC}
                         resizeMode= 'contain'
                         style={styles.startIcon}
                     />
@@ -46,7 +39,7 @@ const HistoryItem = (props) => {
                         <Text style={{fontSize:(name.length>20)?11:15,color:'white',fontWeight: 'bold',textAlign: 'center', }}>{name}</Text>  
                     </View>
                     <View style={{height:height * 0.05 }}> 
-                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{distance+"m"}</Text>
+                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{discription}</Text>
                     </View>
                     
                 </View>
@@ -80,4 +73,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default HistoryItem;
+export default WorkoutTimeItem;

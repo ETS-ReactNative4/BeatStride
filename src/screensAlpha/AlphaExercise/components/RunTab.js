@@ -176,7 +176,7 @@ const RunTab = (props) => {
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.mapMode}>
+                <View style={{...styles.mapMode, width: (gpsMode=="track")?80:100,}}>
                     <TouchableOpacity onPress={()=>{
                         if (gpsMode=='track'){
                             setGpsMode('explore');
@@ -185,7 +185,7 @@ const RunTab = (props) => {
                             setGpsMode('track');
                         }
                     }}>
-                        <View style={styles.mapModeContainer}>
+                        <View style={{...styles.mapModeContainer, width: (gpsMode=="track")?80:100,}}>
                             {(gpsMode=='track')?
                                 <Image 
                                     source={require('../../../assets/icons/ExercisePlay.png')}
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
         
         //height: height * 0.1,
         height: 25,
-        width: 80,
+
         //aspectRatio: 1,
         borderRadius: 25,
         position: 'absolute',
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
         
         //height: height * 0.1,
         height: 25,
-        width: 80,
+
         //aspectRatio: 1,
         borderRadius: 25,
         //top: height * (0.4-0.1), 

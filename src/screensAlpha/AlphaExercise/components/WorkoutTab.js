@@ -7,20 +7,27 @@ import * as geolib from 'geolib';
 // import * as Firestore from '../../../api/firestore';
 
 import HistoryItem from './HistoryItem';
-import HistoryParkItem from './HistoryParkItem';
+import WorkoutParkItem from './WorkoutParkItem';
+import WorkoutTimeItem from './WorkoutTimeItem';
+import { ScrollView } from 'react-native-gesture-handler';
 const {width, height} = Dimensions.get("window")
 
 /**
- * This is a functional component representing the History Tab in Exercise page.
+ * This is a functional component representing the Workout Tab in Exercise page.
  * 
  * @author NTU CZ2006 Team Alpha
  */
-const HistoryTab = (props) => {
+const WorkoutTab = (props) => {
     const [history, setHistory] = useState([])
     const [totalDistance, setTotalDistance] = useState(35000)
     const [totalRuns, setTotalRuns] = useState(6)
     const [parkList, setParkList] = useState([])
-    console.log("In HistoryTab"+props.parkList);
+    const [workOutActivities,setWorkOutActivities]=useState([{'name':'Time Racing','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunImg.png"),"discription":"Invite Friends"},
+    {'name':'OutRun Easy','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunEasyRunning.png"),"discription":"8min/km"},
+    {'name':'OutRun Intermediate','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunIntRunning.png"),"discription":"6min/km"},
+    {'name':'OutRun Pro','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunProRunning.png"),"discription":"5min/km"},
+])
+    console.log("In Workout Tab"+props.parkList);
     const DATA = [
         {
             distance:78.2,
@@ -217,101 +224,133 @@ const HistoryTab = (props) => {
 
 
     return (
-        <View style={styles.componentContainer}>
+        <ScrollView>
+            <View style={styles.componentContainer}>
 
-            {/* Stats */}
+                {/* Stats */}
 
-            {/* <SafeAreaView style={{ flex: 1, backgroundColor: 'rebeccapurple', paddingTop: 50 ,height:250}}>
-                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                    <Carousel
-                        nestedScrollEnabled={true}
-                        layout="default"
-                        ref={ref}
-                        data={carouselItems}
-                        sliderWidth={300}
-                        itemWidth={300}
-                        renderItem={renderItem}
-                        onSnapToItem={(index) => setActiveIndex(index)}
-                        />
+                {/* <SafeAreaView style={{ flex: 1, backgroundColor: 'rebeccapurple', paddingTop: 50 ,height:250}}>
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+                        <Carousel
+                            nestedScrollEnabled={true}
+                            layout="default"
+                            ref={ref}
+                            data={carouselItems}
+                            sliderWidth={300}
+                            itemWidth={300}
+                            renderItem={renderItem}
+                            onSnapToItem={(index) => setActiveIndex(index)}
+                            />
+                    </View>
+                </SafeAreaView> */}
+
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleText}>SPACE RACING </Text>
                 </View>
-            </SafeAreaView> */}
-            <View style={{...styles.list,flexDirection:'row',height: height * 0.25,justifyContent:'space-evenly'}}>
-                {props.parkList.slice(0, 2).map(item => {return ( 
-                    <HistoryParkItem
-                        parkData={item}
-                        scrollToPage={props.scrollToPage}
-                        setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
-                        navToCoord={props.navToCoord}
-                        setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
-                    />)})}
-            </View>
-            <View style={{...styles.list,flexDirection:'row',height: height * 0.25,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
-                {props.parkList.slice(2, 4).map(item => {return ( 
-                    <HistoryParkItem
-                        parkData={item}
-                        scrollToPage={props.scrollToPage}
-                        setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
-                        navToCoord={props.navToCoord}
-                        setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
-                    />)})}
-            </View>
-            {/* <FlatList
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                numColumns={2}
-                //data={history}
-                data={parkList}
-                keyExtractor={item => item.id}
-                renderItem={({item}) => 
-                    <HistoryParkItem
-                        parkData={item}
-                        scrollToPage={props.scrollToPage}
-                        setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
-                    />
-                }
-                ListEmptyComponent={
-                    <View style={styles.emptyList}>
-                        <IconButton icon="run" style={{ margin: 0 }} color={'#72767D'} size={height * 0.045}/>
-                        <Text style={styles.emptyText}>No Run History</Text>
-                    </View>
-                }
-            /> */}
-            <FlatList
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                numColumns={1}
-                //data={history}
-                data={DATA}
-                keyExtractor={item => item.id}
-                renderItem={({item}) => 
-                    <HistoryItem
-                        distance={item.distance} 
-                        positions={item.positions}
-                        steps={item.steps}
-                        duration={item.duration}
-                        time={item.time}
-                        day={item.day}
-                        date={item.date}
-                        mode={item.mode}
-                        id={item.id}
-                    />
-                }
-                ListEmptyComponent={
-                    <View style={styles.emptyList}>
-                        <IconButton icon="run" style={{ margin: 0 }} color={'#72767D'} size={height * 0.045}/>
-                        <Text style={styles.emptyText}>No Run History</Text>
-                    </View>
-                }
-            />
+                <View style={styles.descriptionContainer}>
+                    <Text style={styles.descriptionText}>Find a park near you to conquer & explore.</Text>
+                </View>
+                <View style={{...styles.list,flexDirection:'row',height: height * 0.25,justifyContent:'space-evenly'}}>
+                    {props.parkList.slice(0, 2).map(item => {return ( 
+                        <WorkoutParkItem
+                            parkData={item}
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            navToCoord={props.navToCoord}
+                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                        />)})}
+                </View>
 
-        </View>
+                <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
+                    {props.parkList.slice(2, 4).map(item => {return ( 
+                        <WorkoutParkItem
+                            parkData={item}
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            navToCoord={props.navToCoord}
+                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                        />)})}
+                </View>
+
+                <View style={{...styles.titleContainer,backgroundColor: '#7289DA',}}>
+                    <Text style={styles.titleText}>TIME RACING </Text>
+                </View>
+                <View style={{...styles.descriptionContainer}}>
+                    <Text style={styles.descriptionText}>Run with Friends Remotely. Even Apart, we are together!</Text>
+                </View>
+                
+                {/* <View style={{...styles.list,flexDirection:'row',height: height * 0.25,marginTop:5,justifyContent:'space-evenly'}}>
+                    {props.parkList.slice(0, 2).map(item => {return ( 
+                        <WorkoutTimeItem
+                            parkData={item}
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            navToCoord={props.navToCoord}
+                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                            imageSRC={require("../../../assets/icons/HistoryTabTimeRunImg.png")}
+                        />)})}
+                </View> */}
+                <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'flex-start'}}>
+                    {workOutActivities.slice(0, 1).map(item => {return ( 
+                        <WorkoutTimeItem
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            imageSRC={item.ImgeSRC}
+                            name={item.name}
+                            discription={item.discription}
+                        />)})}
+                </View>
+                <View style={{...styles.titleContainer,backgroundColor: '#7289DA',}}>
+                    <Text style={{...styles.titleText,fontSize:20}}>OUTRUN YOURSELF </Text>
+                </View>
+                <View style={{...styles.descriptionContainer}}>
+                    <Text style={styles.descriptionText}>Guided Run to outrun yourself!</Text>
+                </View>
+                
+                {/* <View style={{...styles.list,flexDirection:'row',height: height * 0.25,marginTop:5,justifyContent:'space-evenly'}}>
+                    {props.parkList.slice(0, 2).map(item => {return ( 
+                        <WorkoutTimeItem
+                            parkData={item}
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            navToCoord={props.navToCoord}
+                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                            imageSRC={require("../../../assets/icons/HistoryTabTimeRunImg.png")}
+                        />)})}
+                </View> */}
+                <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
+                    {workOutActivities.slice(1, 3).map(item => {return ( 
+                        <WorkoutTimeItem
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            imageSRC={item.ImgeSRC}
+                            name={item.name}
+                            discription={item.discription}
+                        />)})}
+                </View>
+                <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'flex-start'}}>
+                    {workOutActivities.slice(3, 4).map(item => {return ( 
+                        <WorkoutTimeItem
+                            scrollToPage={props.scrollToPage}
+                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            imageSRC={item.ImgeSRC}
+                            name={item.name}
+                            discription={item.discription}
+                        />)})}
+                </View>
+            </View>
+        </ScrollView>
+        
+            
+
+        
     );
 };
 
 const styles = StyleSheet.create({
     componentContainer:{
         width: width,
-        height: height * 0.73,
+        height: height * 2,
         backgroundColor: '#282B30',
     },  
     statsContainer:{
@@ -324,6 +363,32 @@ const styles = StyleSheet.create({
         borderBottomColor: '#424549',
         backgroundColor: '#282B30',
         
+    },
+    titleContainer:{
+        width: width * 0.65,
+        height: height * 0.08,
+        justifyContent:'center',
+        paddingLeft: width * 0.7 * 0.1,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        backgroundColor: '#BABBBF',
+        //backgroundColor: 'pink',
+    },
+    titleText:{
+        fontWeight: 'bold',
+        fontSize: 24,
+        color: '#FFFFFF',
+    },
+    descriptionContainer:{
+        width: width,
+        height: height * 0.05,
+        paddingLeft: width * 0.7 * 0.05,
+        paddingTop: height * 0.08 * 0.1,
+        // backgroundColor: 'purple',
+    },
+    descriptionText:{
+        fontSize: 12,
+        color: '#BABBBF',
     },
     statsComponent:{
         width: width * 0.5,
@@ -364,4 +429,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default HistoryTab;
+export default WorkoutTab;

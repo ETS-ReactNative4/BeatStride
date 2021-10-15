@@ -4,7 +4,7 @@ import { StyleSheet,  Text,  View, Dimensions, Animated, TouchableWithoutFeedbac
 import * as geolib from 'geolib';
 import Screen from '../MainScreen';
 import RunTab from './components/RunTab';
-import HistoryTab from './components/HistoryTab';
+import WorkoutTab from './components/WorkoutTab';
 import * as Location from 'expo-location'
 
 // import * as Spotify from '../Music/components/spotify_player_controls';
@@ -198,7 +198,7 @@ const AlphaExerciseScreen = () => {
         inputRange: [ 0 , width],
         outputRange: [ '#282B30', '#424549'],
     });
-    const HistoryIndicator = scrollX.interpolate({
+    const WorkoutIndicator = scrollX.interpolate({
         inputRange: [ 0 , width],
         outputRange: [ '#424549', '#282B30'],
     });
@@ -206,7 +206,7 @@ const AlphaExerciseScreen = () => {
         inputRange: [ 0 , width],
         outputRange: [ '#FFFFFF', '#424549'],
     });
-    const HistoryHighlight = scrollX.interpolate({
+    const WorkoutHighlight = scrollX.interpolate({
         inputRange: [ 0 , width],
         outputRange: [ '#424549', '#FFFFFF'],
     });
@@ -234,14 +234,14 @@ const AlphaExerciseScreen = () => {
                       </View>
                   </TouchableWithoutFeedback>
 
-                  {/* History Tab */}
+                  {/* Workout Tab */}
                   <TouchableWithoutFeedback onPress={() => setScrollToPage(1)}>
                       <View>
-                          <Animated.View style={{...styles.tab, backgroundColor: HistoryIndicator}}>
-                              <Text style={styles.tabText}>History</Text>
+                          <Animated.View style={{...styles.tab, backgroundColor: WorkoutIndicator}}>
+                              <Text style={styles.tabText}>Workout</Text>
                           </Animated.View>
 
-                          <Animated.View style={{...styles.tabHighlight, backgroundColor: HistoryHighlight,}}/>
+                          <Animated.View style={{...styles.tabHighlight, backgroundColor: WorkoutHighlight,}}/>
                       </View>
                   </TouchableWithoutFeedback>
                 </View>
@@ -269,8 +269,10 @@ const AlphaExerciseScreen = () => {
 
                     setCurrCoord={(currCoord)=>{setCurrCoord(currCoord)}}
                     parkList={parkList}
+
+                    
                     />
-                <HistoryTab
+                <WorkoutTab
                     currCoord={currCoord}
                     setCurrCoord={(currCoord)=>{setCurrCoord(currCoord)}}
 

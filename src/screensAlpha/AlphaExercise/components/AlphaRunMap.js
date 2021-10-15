@@ -53,7 +53,7 @@ const AlphaRunMap = (props) => {
             console.log("In Map"+props.navToCoord.latitude)
             //console.log(parkpoly["ADMIRALTY PK"])
             setParkRegion({
-                latitude: props.navToCoord.latitude-0.0008,
+                latitude: props.navToCoord.latitude-0.0010,
                 longitude: props.navToCoord.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
