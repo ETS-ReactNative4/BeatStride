@@ -96,7 +96,7 @@ const RunTab = (props) => {
             console.log('Getting current Location')
             //setPositions( [{latitude: latitude, longitude: longitude}] );
             setCurrCoord( {latitude: latitude, longitude: longitude} );
-
+            props.setCurrCoord( {latitude: latitude, longitude: longitude} );
         } catch (error) {
             console.log(error)
         }
@@ -142,6 +142,7 @@ const RunTab = (props) => {
 
         //setPositions((prev) => [...prev , currPos]);
         setCurrCoord(currPos);
+        props.setCurrCoord( currPos );
     }
 
 
@@ -164,6 +165,10 @@ const RunTab = (props) => {
                     currCoord={currCoord}
                     gpsMode={gpsMode}
                     setGpsMode={(gpsMode)=>{setGpsMode(gpsMode)}}
+                    parkList={props.parkList}
+
+                    navToCoord={props.navToCoord}
+                    setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
                 />
                 <RunModePicker/>
                 <View style={styles.startButton}>
