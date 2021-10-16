@@ -15,6 +15,17 @@ const AlphaRunMap = (props) => {
     const mapPositions = props.mapPositions;
     const currCoord = props.currCoord;
 
+    const gpsMode=props.gpsMode;
+    const setGpsMode=props.setGpsMode;
+
+    const parkList=props.parkList;
+
+    const typeList=props.typeList;
+    const typeListIdx=props.typeListIdx;
+
+    const navToCoord=props.navToCoord;
+    const setNavToCoord=props.setNavToCoord;
+
     const [region,setRegion]=useState({
         latitude: currCoord.latitude-0.0008,
         longitude: currCoord.longitude,
@@ -38,28 +49,28 @@ const AlphaRunMap = (props) => {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
             })
-        if(props.gpsMode=="track"){
-            console.log('useEffect1 '+props.gpsMode)
+        if(gpsMode=="track"){
+            console.log('useEffect1 '+gpsMode)
             console.log('useEffect1 '+region)
             mapViewRef.current.animateToRegion(
             region,200
             )
         }
 
-    },[currCoord,props.gpsMode])
+    },[currCoord,gpsMode])
 
     useEffect(()=>{
-        if(props.navToCoord!=null){
-            console.log("In Map"+props.navToCoord.latitude)
+        if(navToCoord!=null){
+            console.log("In Map"+navToCoord.latitude)
             //console.log(parkpoly["ADMIRALTY PK"])
             setParkRegion({
-                latitude: props.navToCoord.latitude-0.0010,
-                longitude: props.navToCoord.longitude,
+                latitude: navToCoord.latitude-0.0010,
+                longitude: navToCoord.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
                 })
 
-            props.setGpsMode("explore")
+            setGpsMode("explore")
             // //filterPolygon();
             // //console.log(parkpoly["ADMIRALTY PK"]);
             // if(props.gpsMode=="track"){
@@ -72,15 +83,15 @@ const AlphaRunMap = (props) => {
         }
         
 
-    },[props.navToCoord])
+    },[navToCoord])
 
 
     useEffect(()=>{
-        if(props.navToCoord!=null){
+        if(navToCoord!=null){
 
-            console.log("Moving Now"+props.navToCoord.latitude)
+            console.log("Moving Now"+navToCoord.latitude)
             mapViewRef.current.animateToRegion(parkRegion,500)
-            props.setGpsMode("explore")
+            setGpsMode("explore")
             // //filterPolygon();
             // //console.log(parkpoly["ADMIRALTY PK"]);
             // if(props.gpsMode=="track"){
@@ -109,8 +120,8 @@ const AlphaRunMap = (props) => {
                 onRegionChangeComplete={(region, gesture) => {
                     //console.log('user move map')
                     if(gesture.isGesture){
-                        props.setGpsMode("explore")
-                        console.log('user move map'+(props.gpsMode=="explore"))
+                        setGpsMode("explore")
+                        console.log('user move map'+(gpsMode=="explore"))
                     }else{
                         console.log('animate move map '+gesture)
                     }
@@ -142,14 +153,14 @@ const AlphaRunMap = (props) => {
                         tappable={true}
                         onPress={() => { props.setNavToCoord({latitude:item.geometry.location.lat,longitude:item.geometry.location.lng});}}
                 /> */}
-                {props.parkList.map((item,index)=>{return ((item.polygon!=null)?
+                {parkList.map((item,index)=>{return (((item.polygon!=null) && (typeList[typeListIdx].name=="SPACE"))?
                     <Polygon
                         coordinates={item.polygon}
                         fillColor={fillColorPicker[index]}
                         strokeColor="rgba(0,0,0,0.5)"
                         strokeWidth={2}
                         tappable={true}
-                        onPress={() => { props.setNavToCoord({latitude:item.geometry.location.lat,longitude:item.geometry.location.lng});}}
+                        onPress={() => { setNavToCoord({latitude:item.geometry.location.lat,longitude:item.geometry.location.lng});}}
                     />:
                     <></>)
                 })}

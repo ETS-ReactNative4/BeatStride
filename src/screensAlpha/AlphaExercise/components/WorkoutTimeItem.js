@@ -20,10 +20,16 @@ const WorkoutTimeItem = (props) => {
     const name=props.name;
     const imageSRC=props.imageSRC;
     const discription=props.discription;
+    const setScrollToPage=props.setScrollToPage;
+
+    const typeList=props.typeList;
+    const setTypeListIdx=props.setTypeListIdx;
 
     return (
             <TouchableOpacity 
-                onPress={() => {props.setScrollToPage(0);
+                onPress={() => {setScrollToPage(0);
+   
+                    setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='TIME';}))
                     //console.log("In History Park Item"+props.parkData.geometry.location.lat );              
                 }}
                 // onLongPress={removeHistory}

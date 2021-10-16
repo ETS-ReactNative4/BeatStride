@@ -21,13 +21,25 @@ const WorkoutTab = (props) => {
     const [history, setHistory] = useState([])
     const [totalDistance, setTotalDistance] = useState(35000)
     const [totalRuns, setTotalRuns] = useState(6)
-    const [parkList, setParkList] = useState([])
     const [workOutActivities,setWorkOutActivities]=useState([{'name':'Time Racing','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunImg.png"),"discription":"Invite Friends"},
     {'name':'OutRun Easy','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunEasyRunning.png"),"discription":"8min/km"},
     {'name':'OutRun Intermediate','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunIntRunning.png"),"discription":"6min/km"},
     {'name':'OutRun Pro','ImgeSRC':require("../../../assets/icons/HistoryTabTimeRunProRunning.png"),"discription":"5min/km"},
 ])
-    console.log("In Workout Tab"+props.parkList);
+
+    const parkList=props.parkList;
+    console.log("In Workout Tab"+parkList);
+
+    const scrollToPage=props.scrollToPage;
+    const setScrollToPage=props.setScrollToPage;
+
+    const navToCoord=props.navToCoord;
+    const setNavToCoord=props.setNavToCoord;
+
+    const typeList=props.typeList;
+    const typeListIdx=props.typeListIdx;
+    const setTypeListIdx=props.setTypeListIdx;
+
     const DATA = [
         {
             distance:78.2,
@@ -251,24 +263,32 @@ const WorkoutTab = (props) => {
                     <Text style={styles.descriptionText}>Find a park near you to conquer & explore.</Text>
                 </View>
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.25,justifyContent:'space-evenly'}}>
-                    {props.parkList.slice(0, 2).map(item => {return ( 
+                    {parkList.slice(0, 2).map(item => {return ( 
                         <WorkoutParkItem
                             parkData={item}
-                            scrollToPage={props.scrollToPage}
-                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
-                            navToCoord={props.navToCoord}
-                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                            scrollToPage={scrollToPage}
+                            setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
+                            navToCoord={navToCoord}
+                            setNavToCoord={(navToCoord)=>{setNavToCoord(navToCoord)}}
+
+                            typeList={typeList}
+                            typeListIdx={typeListIdx}
+                            setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                         />)})}
                 </View>
 
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
-                    {props.parkList.slice(2, 4).map(item => {return ( 
+                    {parkList.slice(2, 4).map(item => {return ( 
                         <WorkoutParkItem
                             parkData={item}
-                            scrollToPage={props.scrollToPage}
-                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
-                            navToCoord={props.navToCoord}
-                            setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                            scrollToPage={scrollToPage}
+                            setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
+                            navToCoord={navToCoord}
+                            setNavToCoord={(navToCoord)=>{setNavToCoord(navToCoord)}}
+
+                            typeList={typeList}
+                            typeListIdx={typeListIdx}
+                            setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                         />)})}
                 </View>
 
@@ -293,11 +313,15 @@ const WorkoutTab = (props) => {
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'flex-start'}}>
                     {workOutActivities.slice(0, 1).map(item => {return ( 
                         <WorkoutTimeItem
-                            scrollToPage={props.scrollToPage}
-                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            scrollToPage={scrollToPage}
+                            setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
                             imageSRC={item.ImgeSRC}
                             name={item.name}
                             discription={item.discription}
+
+                            typeList={typeList}
+                            typeListIdx={typeListIdx}
+                            setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                         />)})}
                 </View>
                 <View style={{...styles.titleContainer,backgroundColor: '#7289DA',}}>
@@ -321,21 +345,29 @@ const WorkoutTab = (props) => {
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
                     {workOutActivities.slice(1, 3).map(item => {return ( 
                         <WorkoutTimeItem
-                            scrollToPage={props.scrollToPage}
-                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            scrollToPage={scrollToPage}
+                            setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
                             imageSRC={item.ImgeSRC}
                             name={item.name}
                             discription={item.discription}
+
+                            typeList={typeList}
+                            typeListIdx={typeListIdx}
+                            setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                         />)})}
                 </View>
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'flex-start'}}>
                     {workOutActivities.slice(3, 4).map(item => {return ( 
                         <WorkoutTimeItem
-                            scrollToPage={props.scrollToPage}
-                            setScrollToPage={(srollToPage)=>{props.setScrollToPage(srollToPage)}}
+                            scrollToPage={scrollToPage}
+                            setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
                             imageSRC={item.ImgeSRC}
                             name={item.name}
                             discription={item.discription}
+
+                            typeList={typeList}
+                            typeListIdx={typeListIdx}
+                            setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                         />)})}
                 </View>
             </View>

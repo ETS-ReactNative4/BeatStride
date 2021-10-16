@@ -16,10 +16,10 @@ import moment from 'moment';
 const {width, height} = Dimensions.get("window")
 
 const WorkoutParkItem = (props) => {
-    
-    const name=props.parkData.name;
-    const distance=props.parkData.distance.toFixed(1);
-    const photoref=props.parkData.photos[0].photo_reference;
+    const parkData=props.parkData;
+    const name=parkData.name;
+    const distance=parkData.distance.toFixed(1);
+    const photoref=parkData.photos[0].photo_reference;
     const url  = 'https://maps.googleapis.com/maps/api/place/photo?'
     const maxwidth = `maxwidth=400`;
     const photorefField = `&photo_reference=${photoref}`;
@@ -27,11 +27,21 @@ const WorkoutParkItem = (props) => {
     const parkSearchUrl = url + maxwidth + photorefField +  key;
     console.log(parkSearchUrl)
 
+    const setScrollToPage=props.setScrollToPage;
+
+    const typeList=props.typeList;
+    const setTypeListIdx=props.setTypeListIdx;
+
+    const setNavToCoord=props.setNavToCoord;
+
+    
+
     return (
             <TouchableOpacity 
-                onPress={() => {props.setScrollToPage(0);
+                onPress={() => {setScrollToPage(0);
                     //console.log("In History Park Item"+props.parkData.geometry.location.lat );
-                    props.setNavToCoord({latitude:props.parkData.geometry.location.lat,longitude:props.parkData.geometry.location.lng});                
+                    setNavToCoord({latitude:parkData.geometry.location.lat,longitude:parkData.geometry.location.lng});     
+                    setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='SPACE';}))      
                 }}
                 // onLongPress={removeHistory}
             >   

@@ -28,6 +28,29 @@ const AlphaExerciseScreen = () => {
     const [navToCoord, setNavToCoord]= useState();
     //const [timearray,setTimearray]=useState([]);
 
+    //Settings Picker
+    const[activityList,setActivityList]=useState([{'name':'Running','iconSRC':require('../../assets/icons/RunTabRunActivity.png')},
+    {'name':'Walking','iconSRC':require('../../assets/icons/RunTabWalkActivity.png')},
+    {'name':'Cycling','iconSRC':require('../../assets/icons/RunTabCycleActivity.png')},
+    ])
+    const[activityListIdx,setActivityListIdx]=useState(0);
+
+    const[typeList,setTypeList]=useState([{'name':'TIME','iconSRC':require('../../assets/icons/RunTabTimeType.png')},
+    {'name':'SPACE','iconSRC':require('../../assets/icons/RunTabSpaceType.png')},
+    ])
+    const[typeListIdx,setTypeListIdx]=useState(0);
+
+    const[musicList,setMusicList]=useState([{'name':'Spotify','iconSRC':require('../../assets/icons/RunTabMusicSpotify.png')},
+    {'name':'Youtube','iconSRC':require('../../assets/icons/RunTabMusicSpotify.png')},
+    ])
+    const[musicListIdx,setMusicListIdx]=useState(0);
+
+    const[audioList,setAudioList]=useState([{'name':'0.5KM','iconSRC':require('../../assets/icons/RunTabAudioStats.png')},
+    {'name':'1KM','iconSRC':require('../../assets/icons/RunTabAudioStats.png')},
+    ])
+    const[audioListIdx,setAudioListIdx]=useState(0);
+
+
 
     useEffect(() => {
         handleParkSearch ();
@@ -269,7 +292,22 @@ const AlphaExerciseScreen = () => {
 
                     setCurrCoord={(currCoord)=>{setCurrCoord(currCoord)}}
                     parkList={parkList}
-
+                    
+                    activityList={activityList}
+                    activityListIdx={activityListIdx}
+                    setActivityListIdx={(listIdx)=>setActivityListIdx(listIdx)}
+                    
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+                    
+                    musicList={musicList}
+                    musicListIdx={musicListIdx}
+                    setMusicListIdx={(listIdx)=>setMusicListIdx(listIdx)}
+                    
+                    audioList={audioList}
+                    audioListIdx={audioListIdx}
+                    setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
                     
                     />
                 <WorkoutTab
@@ -282,6 +320,22 @@ const AlphaExerciseScreen = () => {
                     scrollToPage={scrollToPage}
                     setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
                     parkList={parkList}
+
+                    activityList={activityList}
+                    activityListIdx={activityListIdx}
+                    setActivityListIdx={(listIdx)=>setActivityListIdx(listIdx)}
+                    
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+                    
+                    musicList={musicList}
+                    musicListIdx={musicListIdx}
+                    setMusicListIdx={(listIdx)=>setMusicListIdx(listIdx)}
+
+                    audioList={audioList}
+                    audioListIdx={audioListIdx}
+                    setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
                     />
             </Animated.ScrollView>
 
