@@ -5,9 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import AppTab from './AppTab';
 import LoadingScreen from '../screens/Onboarding/LoadingScreen';
-import LoginScreen from '../screens/Onboarding/LoginScreen';
-import RegisterScreen from '../screens/Onboarding/RegisterScreen';
-import GuideScreen from '../screens/Onboarding/GuideScreen';
+// import LoginScreen from '../screens/Onboarding/LoginScreen';
+// import RegisterScreen from '../screens/Onboarding/RegisterScreen';
+// import GuideScreen from '../screens/Onboarding/GuideScreen';
+import LoginScreen from '../screens/Onboarding/Login/Login'; //Login 1st Page
+import RegisterScreen from '../screens/Onboarding/Login/CreateAccount'; //Login 2nd Page
+import GuideScreen from '../screens/Onboarding/GuideScreen'; // Unchanged
+import SetupProfile from '../screens/Onboarding/Login/SetupProfile'; // Login 3rd Page
+import FollowScreen from '../screens/Onboarding/Login/FollowScreen'; // Login 4th Page
 import SongScreen from '../screens/Music/SongsScreen';
 import RunningScreen from '../screens/Running/RunningScreen';
 import EndScreen from '../screens/RunEnd/EndScreen';
@@ -56,6 +61,18 @@ const AppStack = () => {
                 key="GuideScreen"
                 name="GuideScreen"
                 component={GuideScreen}
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                key="SetupProfile"
+                name="SetupProfile"
+                component={SetupProfile}
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                key="FollowScreen"
+                name="FollowScreen"
+                component={FollowScreen}
                 options={{headerShown: false}}
             />
             <Stack.Screen
