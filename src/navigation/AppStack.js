@@ -20,6 +20,10 @@ import ChangePasswordScreen from '../screens/Profile/ChangePasswordScreen';
 import ForgotPasswordScreen from '../screens/Onboarding/ForgotPasswordScreen';
 import GoalSettingScreen from '../screens/Exercise/GoalSettingScreen';
 
+// Omkar
+import RunScreenAlpha from '../screensAlpha/AlphaExercise/RunScreenAlpha';
+import AlphaEndScreen from '../screensAlpha/AlphaExercise/AlphaEndScreen';
+
 const {width, height} = Dimensions.get("window")
 
 const Stack = createStackNavigator();
@@ -179,6 +183,19 @@ const AppStack = () => {
                         fontWeight: 'bold',
                     }
                 }}
+            />
+            {/* Added by Omkar */}
+            <Stack.Screen
+                key="RunScreenAlpha"
+                name="RunScreenAlpha"
+                component={RunScreenAlpha}
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                key="AlphaEndScreen"
+                name="AlphaEndScreen"
+                component={AlphaEndScreen}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     );

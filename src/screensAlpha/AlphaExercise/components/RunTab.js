@@ -9,6 +9,7 @@ import RunModePicker from './RunModePicker';
 import * as LocationLib from '../../../api/LocationPermissions';
 import * as Location from 'expo-location'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native'; 
 const {width, height} = Dimensions.get("window")
 
 
@@ -19,6 +20,7 @@ const {width, height} = Dimensions.get("window")
  * @author NTU CZ2006 Team Alpha
  */
 const RunTab = (props) => {
+    const navigation = useNavigation();
     const [runStatus, setRunStatus] = useState(0);              //Status of activity
     const [mapPositions, setMapPositions] = useState([])
     //GPS Tracking Data
@@ -145,7 +147,55 @@ const RunTab = (props) => {
         props.setCurrCoord( currPos );
     }
 
+    /* 
+        Changes by omkar to incorporate the running page.
+    */
 
+    const [selectToggle, setSelectToggle] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState(0);
+    
+    /**
+     * This is a method to check the status of device's location service.
+    */
+    
+    const seviceCheck = async() => {
+        const check = await Location.hasServicesEnabledAsync()
+        // console.log(check)
+        if (check) {
+            setStatus(1);
+        } else {
+            try {
+                const pos = await Location.getCurrentPositionAsync();
+                if (pos) {
+                    setStatus(1);
+                }
+            } catch(error) {
+                console.log(error);
+                Alert.alert(
+                    "GPS Location Service",
+                    "Run function requires GPS Location Service enabled. Please enable GPS Location Service and try again.",
+                    [ { text:"Understood", onPress: () => {console.log("Alert closed")} } ]
+                )
+                setStatus(0);
+            }
+        }
+    }
+
+    /**
+     * This is a render effect based on "status" state.
+    */
+     
+    useEffect(() => {
+        if (status === 1) {
+            console.log("GPS Enabled")
+            setSelectToggle(true);
+        }
+        if (status === 6) {
+            console.log("Checking GPS Service")
+            seviceCheck();
+        }
+    },[status])
 
     return (
         <ScrollView 
@@ -172,7 +222,10 @@ const RunTab = (props) => {
                 />
                 <RunModePicker/>
                 <View style={styles.startButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        setStatus(6),
+                        navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                    }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>
                 </View>
