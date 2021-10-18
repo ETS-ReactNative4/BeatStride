@@ -27,6 +27,8 @@ const HistoryItem = (props) => {
     const positions = props.positions;
     const mode = props.mode;
     const id = props.id;
+    const selfUid = props.selfuid;
+    const userId = props.userId;
 
     const displayTime = moment.duration(duration)
     const avgPace = duration / (distance / 1000)
@@ -46,8 +48,24 @@ const HistoryItem = (props) => {
     };
 
     return (
-        <View
-        >
+        <TouchableOpacity 
+        onPress={() => {
+            navigation.navigate("HistoryView", {
+                message:"Run History",
+                distance:distance, 
+                positions:positions, 
+                steps:steps, 
+                duration:duration,
+                time:time,
+                day:day,
+                date:date,
+                mode: mode,
+            })
+        }}
+        
+        onLongPress={()=> {
+            if(selfUid == userId) { return removeHistory() } }}
+    >
             <View style={styles.itemContainer}>
 
                 {/* Statistics */}
@@ -101,7 +119,7 @@ const HistoryItem = (props) => {
                 </View>
 
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

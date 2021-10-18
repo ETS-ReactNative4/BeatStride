@@ -54,7 +54,9 @@ export default function DistancePage() {
         if (uid != "")
         {
             Firestore.db_userhistoryView( uid,
-                (historyList) => { setHistory(historyList.reverse()) },
+                (historyList) => { 
+                    historyList.map((item)=>{item.userId = uid})
+                    setHistory(historyList.reverse()) },
                 (error) => { console.log('history view fail') }
             )
         }
@@ -96,16 +98,14 @@ export default function DistancePage() {
         if (pressuid != "")
         {
             Firestore.db_userhistoryView( pressuid,
-                (historyList) => { setHistory(historyList.reverse()) },
+                (historyList) => { 
+                    historyList.map((item)=>{item.userId = pressuid})
+                    setHistory(historyList.reverse()) },
                 (error) => { console.log('history view fail') }
             )
         }
     },[pressuid])
     
-    filterHistory = (history, filterType) => {
-        console.log('Filter history by ' + filterType);
-        //sort history here
-    }
 
     return (
         <View style={styles.container}>
@@ -154,6 +154,8 @@ export default function DistancePage() {
                                 date={item.date}
                                 mode={item.mode}
                                 id={item.id}
+                                selfuid={uid}
+                                userId = {item.userId}
                             />
                             <HistoryViewMap
                                 positions={item.positions}
