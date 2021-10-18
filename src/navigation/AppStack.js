@@ -30,6 +30,8 @@ import AlphaEditMeScreen from '../screensAlpha/AlphaMe/AlphaEditMeScreen';
 // Omkar
 import RunScreenAlpha from '../screensAlpha/AlphaExercise/RunScreenAlpha';
 import AlphaEndScreen from '../screensAlpha/AlphaExercise/AlphaEndScreen';
+//WeiJian
+import AlphaUserProfileScreen from '../screensAlpha/AlphaSocials/UserProfileScreen';
 
 const {width, height} = Dimensions.get("window")
 
@@ -222,6 +224,23 @@ const AppStack = () => {
                 name="AlphaEndScreen"
                 component={AlphaEndScreen}
                 options={{headerShown: false}}
+            />
+            {/* Added by WeiJian */}
+             <Stack.Screen
+                key="AlphaUserProfileScreen"
+                name="AlphaUserProfileScreen"
+                component={AlphaUserProfileScreen}
+                options={{
+                    title: "User Profile ",
+                    headerStyle: {
+                        backgroundColor: '#1E2124',
+                        height: height * 0.1,
+                    },
+                    headerTintColor: '#BABBBF',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }}
             />
         </Stack.Navigator>
     );
