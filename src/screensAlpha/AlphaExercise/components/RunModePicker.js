@@ -12,7 +12,7 @@ const {width, height} = Dimensions.get("window")
  * 
  * @author NTU CZ2006 Team Alpha
  */
-const RunModePicker = () => {
+const RunModePicker = (props) => {
 
     const [selectToggle, setSelectToggle] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -20,15 +20,46 @@ const RunModePicker = () => {
     
     var tile=['Activity','Type','Music','Audio Stats']
     //Runmode picker
-    const[activity,setActivity]=useState("Running");
-    const[activityType,setActivityType]=useState("Time");
-    const[music,setMusic]=useState("Spotify");
-    const[audio,setAudio]=useState("1KM");
+    const activityList=props.activityList;
+    const activityListIdx=props.activityListIdx;
+    const setActivityListIdx=props.setActivityListIdx;
 
-    const[activityPNG,setActivityPNG]=useState(require('../../../assets/icons/RunTabRunActivity.png'));
-    const[activityTypePNG,setActivityTypePNG]=useState(require('../../../assets/icons/RunTabSpaceType.png'));
-    const[musicPNG,setMusicPNG]=useState(require('../../../assets/icons/RunTabMusic.png'));
-    const[audioPNG,setAudioPNG]=useState(require('../../../assets/icons/RunTabAudioStats.png'));
+    const typeList=props.typeList;
+    const typeListIdx=props.typeListIdx;
+    const setTypeListIdx=props.setTypeListIdx;
+
+    const musicList=props.musicList;
+    const musicListIdx=props.musicListIdx;
+    const setMusicListIdx=props.setMusicListIdx;
+
+    const audioList=props.audioList;
+    const audioListIdx=props.audioListIdx;
+    const setAudioListIdx=props.setAudioListIdx;
+
+
+    // const[activityList,setActivityList]=useState([{'name':'Running','iconSRC':require('../../../assets/icons/RunTabRunActivity.png')},
+    // {'name':'Walking','iconSRC':require('../../../assets/icons/RunTabWalkActivity.png')},
+    // {'name':'Cycling','iconSRC':require('../../../assets/icons/RunTabCycleActivity.png')},
+    // ])
+    // const[activityListIdx,setActivityListIdx]=useState(0);
+
+    // const[typeList,setTypeList]=useState([{'name':'TIME','iconSRC':require('../../../assets/icons/RunTabTimeType.png')},
+    // {'name':'SPACE','iconSRC':require('../../../assets/icons/RunTabSpaceType.png')},
+    // ])
+    // const[typeListIdx,setTypeListIdx]=useState(0);
+
+    // const[musicList,setMusicList]=useState([{'name':'Spotify','iconSRC':require('../../../assets/icons/RunTabMusicSpotify.png')},
+    // {'name':'Youtube','iconSRC':require('../../../assets/icons/RunTabMusicSpotify.png')},
+    // ])
+    // const[musicListIdx,setMusicListIdx]=useState(0);
+
+
+
+    // const[audioList,setAudioList]=useState([{'name':'0.5KM','iconSRC':require('../../../assets/icons/RunTabAudioStats.png')},
+    // {'name':'1KM','iconSRC':require('../../../assets/icons/RunTabAudioStats.png')},
+    // ])
+    // const[audioListIdx,setAudioListIdx]=useState(0);
+
     /**
      * This is a method to check the status of device's location service.
      */
@@ -76,13 +107,33 @@ const RunModePicker = () => {
             {/* Start Button */}
             <View style={{justifyContent: 'space-between', width: width * 0.95, height: height * 0.2,} }>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', width: width * 0.95, height: height * 0.1-1,overflow:'hidden',}}>
-                        <RumModePickerItem title={tile[0]} discription={activity} imagePNG={activityPNG} />
-                        <RumModePickerItem title={tile[1]} discription={activityType} imagePNG={activityTypePNG}/>
+                        {/*Activity*/}
+                        <RumModePickerItem 
+                            title={tile[0]} 
+                            itemList={activityList}
+                            itemIdx={activityListIdx}
+                            setItemIdx={(itemIdx)=>(setActivityListIdx(itemIdx))} />
+                        {/*Type*/}
+                        <RumModePickerItem 
+                            title={tile[1]} 
+                            itemList={typeList}
+                            itemIdx={typeListIdx}
+                            setItemIdx={(itemIdx)=>(setTypeListIdx(itemIdx))}/>
                     </View>
 
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', width: width * 0.95, height: height * 0.1-1,overflow:'hidden',}}>
-                        <RumModePickerItem title={tile[2]} discription={music} imagePNG={musicPNG}/>
-                        <RumModePickerItem title={tile[3]} discription={audio} imagePNG={audioPNG}/>
+                        {/*Music*/}
+                        <RumModePickerItem 
+                            title={tile[2]} 
+                            itemList={musicList}
+                            itemIdx={musicListIdx}
+                            setItemIdx={(itemIdx)=>(setMusicListIdx(itemIdx))}/>
+                        {/*Audio*/}
+                        <RumModePickerItem 
+                            title={tile[3]} 
+                            itemList={audioList}
+                            itemIdx={audioListIdx}
+                            setItemIdx={(itemIdx)=>(setAudioListIdx(itemIdx))}/>
                     </View>
 
             </View>

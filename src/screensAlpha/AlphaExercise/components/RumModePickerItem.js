@@ -12,15 +12,35 @@ const {width, height} = Dimensions.get("window")
  * 
  * @author NTU CZ2006 Team Alpha
  */
+ 
  const RunModePickerItem = (props) => {
-    
+
+    const itemList=props.itemList;
+    const itemIdx=props.itemIdx;
+    const setItemIdx=props.setItemIdx;
+    const title=props.title;
+
+    console.log("IN PICKER "+itemList)
+
+    useEffect(() => {
+        console.log("RunModePicker "+itemIdx+" "+itemList[itemIdx].name)
+    }, [itemIdx])
+
+    const arraylooper=()=>{
+        if (itemIdx<itemList.length-1){
+            setItemIdx(itemIdx+1)
+        }else{
+            setItemIdx(0)
+        }
+
+    }
     
     return (
         <View style={styles.innercomponentContainer}> 
-            <TouchableOpacity style={styles.startButton} onPress={() => {}}>
+            <TouchableOpacity style={styles.startButton} onPress={()=>{arraylooper()}}>
                 <View>
                     <Image 
-                        source={props.imagePNG}
+                        source={itemList[itemIdx].iconSRC}
                         resizeMode= 'contain'
                         style={styles.startIcon}
                     />
@@ -31,11 +51,11 @@ const {width, height} = Dimensions.get("window")
             
                 {/* Text */}
                 <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>{props.title}</Text>
+                    <Text style={styles.titleText}>{title}</Text>
                     
                 </View>
                 <View style={styles.descriptionContainer}>
-                    <Text style={styles.descriptionText}>{props.discription}</Text>
+                    <Text style={styles.descriptionText}>{itemList[itemIdx].name}</Text>
                 </View>
             </View>
         

@@ -32,6 +32,28 @@ const RunTab = (props) => {
 
     const[gpsMode,setGpsMode]=useState('track');//track, explore
 
+    const parkList=props.parkList;
+
+    const navToCoord=props.navToCoord;
+    const setNavToCoord=props.setNavToCoord;
+
+    
+    const activityList=props.activityList;
+    const activityListIdx=props.activityListIdx;
+    const setActivityListIdx=props.setActivityListIdx;
+
+    const typeList=props.typeList;
+    const typeListIdx=props.typeListIdx;
+    const setTypeListIdx=props.setTypeListIdx;
+
+    const musicList=props.musicList;
+    const musicListIdx=props.musicListIdx;
+    const setMusicListIdx=props.setMusicListIdx;
+
+    const audioList=props.audioList;
+    const audioListIdx=props.audioListIdx;
+    const setAudioListIdx=props.setAudioListIdx;
+
     // // /**
     // //  * Begining UseEffect
     // //  */
@@ -142,6 +164,7 @@ const RunTab = (props) => {
         const currLong = locationObj.coords.longitude
         const currPos = {latitude: currLat, longitude: currLong}
 
+
         //setPositions((prev) => [...prev , currPos]);
         setCurrCoord(currPos);
         props.setCurrCoord( currPos );
@@ -215,12 +238,33 @@ const RunTab = (props) => {
                     currCoord={currCoord}
                     gpsMode={gpsMode}
                     setGpsMode={(gpsMode)=>{setGpsMode(gpsMode)}}
-                    parkList={props.parkList}
+                    parkList={parkList}
 
-                    navToCoord={props.navToCoord}
-                    setNavToCoord={(navToCoord)=>{props.setNavToCoord(navToCoord)}}
+                    navToCoord={navToCoord}
+                    setNavToCoord={(navToCoord)=>{setNavToCoord(navToCoord)}}
+
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                 />
-                <RunModePicker/>
+                <RunModePicker
+                    activityList={activityList}
+                    activityListIdx={activityListIdx}
+                    setActivityListIdx={(listIdx)=>setActivityListIdx(listIdx)}
+                    
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+                    
+                    musicList={musicList}
+                    musicListIdx={musicListIdx}
+                    setMusicListIdx={(listIdx)=>setMusicListIdx(listIdx)}
+                    
+                    audioList={audioList}
+                    audioListIdx={audioListIdx}
+                    setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
+                
+                />
                 <View style={styles.startButton}>
                     <TouchableOpacity onPress={() => {
                         setStatus(6),

@@ -721,3 +721,51 @@ export const db_updateProfile = async(data, onSuccess, onError) => {
         return onError(error)
     }
 }
+
+export const db_updateSetup = (data, onSuccess, onError) => {
+    try {
+        db_updateDesc(data);
+        db_updateWeight(data);
+        db_updateHeight(data);
+        db_updateBirthday(data);
+        return onSuccess();
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+const db_updateDesc = (data) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("users").doc(user_id).update({description: data.description});
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const db_updateWeight = (data) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("users").doc(user_id).update({weight: data.weight});
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const db_updateHeight = (data) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("users").doc(user_id).update({height: data.height});
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const db_updateBirthday = (data) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("users").doc(user_id).update({birthday: data.birthday});
+    } catch (error) {
+        console.log(error)
+    }
+}
