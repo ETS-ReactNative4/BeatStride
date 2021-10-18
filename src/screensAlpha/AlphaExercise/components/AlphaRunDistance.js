@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text:{
-        fontSize: 24,
+        fontSize: 0.03*height,
         fontWeight: 'bold',
         color: '#FFFFFF',
     },
     subtext:{
-        fontSize: 14,
+        fontSize: 0.0175*height,
         color: '#BABBBF',
     },
 })

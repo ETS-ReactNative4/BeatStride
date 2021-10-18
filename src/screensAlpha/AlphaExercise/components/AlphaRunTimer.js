@@ -132,17 +132,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text:{
-        fontSize: 20,
+        fontSize: 0.025*height,
         fontWeight: 'bold',
         color: '#FFFFFF',
     },
     subtext:{
-        fontSize: 14,
+        fontSize: 0.0175*height,
         color: '#BABBBF',
     },
     timeDisplay: {
         textAlign:'center',
-        fontSize: 70,
+        fontSize: 0.0875*height,
         color: 'white'
     },
 });
