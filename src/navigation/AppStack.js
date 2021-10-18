@@ -20,6 +20,8 @@ import ChangePasswordScreen from '../screens/Profile/ChangePasswordScreen';
 import ForgotPasswordScreen from '../screens/Onboarding/ForgotPasswordScreen';
 import GoalSettingScreen from '../screens/Exercise/GoalSettingScreen';
 
+//arron
+import AlphaEditMeScreen from '../screensAlpha/AlphaMe/AlphaEditMeScreen';
 const {width, height} = Dimensions.get("window")
 
 const Stack = createStackNavigator();
@@ -179,6 +181,12 @@ const AppStack = () => {
                         fontWeight: 'bold',
                     }
                 }}
+            />
+            <Stack.Screen
+                key="AlphaEditMeScreen"
+                name="AlphaEditMeScreen"
+                component={AlphaEditMeScreen}
+                options={{headerShown: false}}
             />
         </Stack.Navigator>
     );

@@ -14,7 +14,7 @@ const {width, height} = Dimensions.get('window');
  * 
  * @author NTU CZ2006 Team Alpha
  */
-const EditProfileScreen = ({navigation, route}) => {
+const AlphaEditMeScreen = ({navigation, route}) => {
     const userData = route.params.userData;
     const [username, setUsername] = useState(userData.displayName);
     const [description, setDescription] = useState(userData.description);
@@ -275,4 +275,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EditProfileScreen;
+export default AlphaEditMeScreen;

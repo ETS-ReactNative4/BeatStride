@@ -26,25 +26,21 @@ const PrivateProfileInfo = (props) => {
     const [age, setAge] = useState(0); 
     
     //for history rendering
-    const [history, setHistory] = useState([])
-    const [filterHistory, setFilterHistory] = useState([])
+    const [history, setHistory] = useState([]);
+    const [filterHistory, setFilterHistory] = useState([]);
+    
+    const[filterBy,setFilterBy] = useState('all');
+
     //use effect call when first rendered
     useEffect(async() => {
         Firestore.db_historyView(
             (historyList) => {setHistory(historyList.reverse())},
             (error) => {console.log('history view fail')}
         )
-        
-        // Firestore.db_getUserDataSnapshot(
-        //     (userData) => {
-        //         setTotalDistance(userData.totalDistance)
-        //         setTotalRuns(userData.runCount)
-        //     },
-        //     (error) => {console.log(error)},
-        // )
     },[])
+    
     useEffect(() => {
-        console.log(history);
+        setFilterHistory(history);
     },[history])
 
     /**
@@ -55,15 +51,13 @@ const PrivateProfileInfo = (props) => {
         setHeight(userData.height);
         setWeight(userData.weight);
 
-        setTotalDistance(userData.totalDistance);
-        setRunCount(userData.runCount);
-        setLongestDistance(userData.longestDistance);
-        setFastestPace(userData.fastestPace);
-        setStrideDistance(userData.strideDistance);
-        setJoinDate(userData.joinDate);
+        // setTotalDistance(userData.totalDistance);
+        // setRunCount(userData.runCount);
+        // setLongestDistance(userData.longestDistance);
+        // setFastestPace(userData.fastestPace);
+        // setStrideDistance(userData.strideDistance);
         setAge(calculate_age(birthday));
     }, [userData])
-    
 
     filterHistFunc = (history,filterNo) => {
         currentDay = new Date().getDate();
@@ -74,6 +68,7 @@ const PrivateProfileInfo = (props) => {
         {
             setFilterHistory(history.filter((item)=> { 
                 var[month,day,year] = item.date.split("/");
+                // console.log("Filter by day"+ "day"+currentDay+":"+day +"Month"+currentMonth+":"+month +"Year"+ currentYear+":"+year);
                 return  currentDay === +day && currentMonth === +month && currentYear === +year}))   
         }
         else if(filterNo == 2){
@@ -85,14 +80,14 @@ const PrivateProfileInfo = (props) => {
         {
             setFilterHistory(history.filter((item)=> { 
                 var[month,day,year] = item.date.split("/");
-                return currentYear === +year}))
+                return currentYear === +year})
+                )
         }
         else
         {
             return history;
         }
     }
-    
     calculate_age = (birthday) => {
         var dateee = moment(birthday,"MMMM Do YYYY, h:mm a").toDate();
         var today = new Date();
@@ -105,20 +100,49 @@ const PrivateProfileInfo = (props) => {
         }
         return age_now;
       }
+
+      useEffect(() => {
+              var max = 0;
+              var maxduration = 0;
+              var total = 0;
+              var totalsteps = 0;
+            for(var i = 0; i <filterHistory.length;i++)
+            {   
+                if(max < filterHistory[i].distance)
+                {
+                    max = filterHistory[i].distance;
+                    console.log("max:"+filterHistory[i].distance);
+
+                }
+                if(maxduration < filterHistory[i].duration)
+                {
+                    maxduration = filterHistory[i].duration;
+                }
+                totalsteps += filterHistory[i].steps;
+                total += filterHistory[i].distance;
+            }
+            setTotalDistance(total);
+            setLongestDistance(max);
+            setFastestPace(totalsteps);
+            setStrideDistance(maxduration);
+    }, [filterHistory])
+
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
     return (
         <View>
-        <Text style = {{fontSize:30,color: "#FFFF", paddingTop :10}}> Activity Stats</Text>
+        <Text style = {{fontSize:30,color: "#FFFF" , paddingTop :10}}> Activity Stats</Text>
         {/*Button placement filter*/}
         <View style = {{flexDirection :'row'}}>
         <Button
                     mode="contained"
                     style={{flex: 1,borderWidth: 5, borderRadius: 10}}
                     contentStyle={{paddingVertical: 5}}
-                    theme={{ dark: true, colors: {primary: '#7289DA', underlineColor: 'transparent'}, }}
+                    color = {(filterBy == 'day')? '#7289DA':"#4F535C"}
+                    theme={{ dark: true, colors: {primary:'#7289DA', underlineColor: 'transparent'}, }}
                     onPress={() => {console.log('filter by day');
                     filterHistFunc(history,1)
+                    setFilterBy('day')
                     }}
                     >
                     <Text style={{color: '#FFFFFF'}}>Day</Text>
@@ -128,9 +152,11 @@ const PrivateProfileInfo = (props) => {
                     mode="contained"
                     style={{flex:1, borderWidth: 5,borderRadius: 10}}
                     contentStyle={{paddingVertical: 5}}
+                    color = {(filterBy == 'month')? '#7289DA':"#4F535C"}
                     theme={{ dark: true, colors: {primary: '#7289DA', underlineColor: 'transparent'}, }}
                     onPress={() => {console.log('filter by month');
                     filterHistFunc(history,2)
+                    setFilterBy('month')
                     }}
                     >
                     <Text style={{color: '#FFFFFF'}}>Month</Text>
@@ -140,8 +166,10 @@ const PrivateProfileInfo = (props) => {
                     mode="contained"
                     style={{flex:1, borderWidth: 5,borderRadius: 10}}
                     contentStyle={{paddingVertical: 5}}
-                    theme={{ dark: true, colors: {primary: '#7289DA', underlineColor: 'transparent'}, }}
+                    color = {(filterBy == 'year')? '#7289DA':"#4F535C"}
+                    theme={{ dark: true, colors: {primary: "#4F535C", underlineColor: 'transparent'}, }}
                     onPress={() => {filterHistFunc(history,3)
+                    setFilterBy('year')
                     }}
                     >
                     <Text style={{color: '#FFFFFF'}}>Year</Text>
@@ -155,7 +183,7 @@ const PrivateProfileInfo = (props) => {
                     <View style={{ flexDirection:"row" }}>
                         <Icon name="line-style" size={width*0.1} color="#7289DA" />
                         <View>
-                            <Text style={styles.dataText} numberOfLines={1}>{(totalDistance / 1000).toFixed(2)}</Text>
+                            <Text style={styles.dataText} numberOfLines={1}>{((totalDistance)/1000).toFixed(2)}</Text>
                             <Text style={styles.dataLabel}>Total Distance (km)</Text>
                         </View>
                     </View>
@@ -177,10 +205,11 @@ const PrivateProfileInfo = (props) => {
                 <View style={{ flexDirection:"row" }}>  
                     <View style={styles.userRunDataCard} >
                         <View style={{ flexDirection:"row" }}>
-                            <Icon name="speed" size={width*0.1} color="#7289DA" />
+                            {/* icon slot */}
+                            <Icon name="leaderboard" size={width*0.1} color="#7289DA" />
                             <View>
                                 <Text style={styles.dataText} numberOfLines={1}>{(fastestPace).toFixed(1)}</Text>
-                                <Text style={styles.dataLabel}>Fastest Pace</Text>
+                                <Text style={styles.dataLabel}>Total steps</Text>
                             </View>
                         </View>
                     </View>
@@ -189,7 +218,7 @@ const PrivateProfileInfo = (props) => {
                     <View style={{ flexDirection:"row" }}>
                         <Icon name="thumb-up" size={width*0.1} color="#7289DA" />
                         <View>
-                            <Text style={styles.dataText} numberOfLines={1}>{(longestDistance)}</Text>
+                            <Text style={styles.dataText} numberOfLines={1}>{(longestDistance/1000).toFixed(2)}</Text>
                             <Text style={styles.dataLabel}>Longest Distance(km)</Text>
                         </View>
                     </View>
@@ -197,8 +226,13 @@ const PrivateProfileInfo = (props) => {
             </View>
             <View style={styles.userRunDataContainer}>
                 <View style={styles.userRunDataCard} >
-                        <Text style={styles.dataText} numberOfLines={1}>{(strideDistance)}</Text>
-                        <Text style={styles.dataLabel}>Stride Length (m)</Text>
+                    <View style={{ flexDirection:"row" }}>
+                        <Icon name="timeline" size={width*0.1} color="#7289DA" />
+                        <View>
+                            <Text style={styles.dataText} numberOfLines={1}>{((strideDistance/60000)).toFixed(0)}</Text>
+                            <Text style={styles.dataLabel}>longest duration(min)</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
         </View>
