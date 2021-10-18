@@ -9,6 +9,7 @@ import RunModePicker from './RunModePicker';
 import * as LocationLib from '../../../api/LocationPermissions';
 import * as Location from 'expo-location'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native'; 
 const {width, height} = Dimensions.get("window")
 
 
@@ -19,6 +20,7 @@ const {width, height} = Dimensions.get("window")
  * @author NTU CZ2006 Team Alpha
  */
 const RunTab = (props) => {
+    const navigation = useNavigation();
     const [runStatus, setRunStatus] = useState(0);              //Status of activity
     const [mapPositions, setMapPositions] = useState([])
     //GPS Tracking Data
@@ -29,6 +31,28 @@ const RunTab = (props) => {
     const [permissionsStatus, setPermissionsStatus] = useState(props.permissionsStatus);
 
     const[gpsMode,setGpsMode]=useState('track');//track, explore
+
+    const parkList=props.parkList;
+
+    const navToCoord=props.navToCoord;
+    const setNavToCoord=props.setNavToCoord;
+
+    
+    const activityList=props.activityList;
+    const activityListIdx=props.activityListIdx;
+    const setActivityListIdx=props.setActivityListIdx;
+
+    const typeList=props.typeList;
+    const typeListIdx=props.typeListIdx;
+    const setTypeListIdx=props.setTypeListIdx;
+
+    const musicList=props.musicList;
+    const musicListIdx=props.musicListIdx;
+    const setMusicListIdx=props.setMusicListIdx;
+
+    const audioList=props.audioList;
+    const audioListIdx=props.audioListIdx;
+    const setAudioListIdx=props.setAudioListIdx;
 
     // // /**
     // //  * Begining UseEffect
@@ -96,7 +120,7 @@ const RunTab = (props) => {
             console.log('Getting current Location')
             //setPositions( [{latitude: latitude, longitude: longitude}] );
             setCurrCoord( {latitude: latitude, longitude: longitude} );
-
+            props.setCurrCoord( {latitude: latitude, longitude: longitude} );
         } catch (error) {
             console.log(error)
         }
@@ -140,11 +164,61 @@ const RunTab = (props) => {
         const currLong = locationObj.coords.longitude
         const currPos = {latitude: currLat, longitude: currLong}
 
+
         //setPositions((prev) => [...prev , currPos]);
         setCurrCoord(currPos);
+        props.setCurrCoord( currPos );
     }
 
+    /* 
+        Changes by omkar to incorporate the running page.
+    */
 
+    const [selectToggle, setSelectToggle] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState(0);
+    
+    /**
+     * This is a method to check the status of device's location service.
+    */
+    
+    const seviceCheck = async() => {
+        const check = await Location.hasServicesEnabledAsync()
+        // console.log(check)
+        if (check) {
+            setStatus(1);
+        } else {
+            try {
+                const pos = await Location.getCurrentPositionAsync();
+                if (pos) {
+                    setStatus(1);
+                }
+            } catch(error) {
+                console.log(error);
+                Alert.alert(
+                    "GPS Location Service",
+                    "Run function requires GPS Location Service enabled. Please enable GPS Location Service and try again.",
+                    [ { text:"Understood", onPress: () => {console.log("Alert closed")} } ]
+                )
+                setStatus(0);
+            }
+        }
+    }
+
+    /**
+     * This is a render effect based on "status" state.
+    */
+     
+    useEffect(() => {
+        if (status === 1) {
+            console.log("GPS Enabled")
+            setSelectToggle(true);
+        }
+        if (status === 6) {
+            console.log("Checking GPS Service")
+            seviceCheck();
+        }
+    },[status])
 
     return (
         <ScrollView 
@@ -164,14 +238,42 @@ const RunTab = (props) => {
                     currCoord={currCoord}
                     gpsMode={gpsMode}
                     setGpsMode={(gpsMode)=>{setGpsMode(gpsMode)}}
+                    parkList={parkList}
+
+                    navToCoord={navToCoord}
+                    setNavToCoord={(navToCoord)=>{setNavToCoord(navToCoord)}}
+
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
                 />
-                <RunModePicker/>
+                <RunModePicker
+                    activityList={activityList}
+                    activityListIdx={activityListIdx}
+                    setActivityListIdx={(listIdx)=>setActivityListIdx(listIdx)}
+                    
+                    typeList={typeList}
+                    typeListIdx={typeListIdx}
+                    setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+                    
+                    musicList={musicList}
+                    musicListIdx={musicListIdx}
+                    setMusicListIdx={(listIdx)=>setMusicListIdx(listIdx)}
+                    
+                    audioList={audioList}
+                    audioListIdx={audioListIdx}
+                    setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
+                
+                />
                 <View style={styles.startButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        setStatus(6),
+                        navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                    }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.mapMode}>
+                <View style={{...styles.mapMode, width: (gpsMode=="track")?80:100,}}>
                     <TouchableOpacity onPress={()=>{
                         if (gpsMode=='track'){
                             setGpsMode('explore');
@@ -180,7 +282,7 @@ const RunTab = (props) => {
                             setGpsMode('track');
                         }
                     }}>
-                        <View style={styles.mapModeContainer}>
+                        <View style={{...styles.mapModeContainer, width: (gpsMode=="track")?80:100,}}>
                             {(gpsMode=='track')?
                                 <Image 
                                     source={require('../../../assets/icons/ExercisePlay.png')}
@@ -267,7 +369,7 @@ const styles = StyleSheet.create({
         
         //height: height * 0.1,
         height: 25,
-        width: 80,
+
         //aspectRatio: 1,
         borderRadius: 25,
         position: 'absolute',
@@ -285,7 +387,7 @@ const styles = StyleSheet.create({
         
         //height: height * 0.1,
         height: 25,
-        width: 80,
+
         //aspectRatio: 1,
         borderRadius: 25,
         //top: height * (0.4-0.1), 
