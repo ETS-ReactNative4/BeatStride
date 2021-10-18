@@ -410,7 +410,7 @@ return (
       <View style={{backgroundColor: '#282B30',flex: 1}}>
       <View style={screenStyle.screen}>
         <View>
-          <Text style={{textAlign:'center',color:'green', fontSize:25}}>
+          <Text style={{textAlign:'center',color:'green', fontSize:height*0.03125}}>
             ACTIVE RACE
           </Text>
         </View>
@@ -460,7 +460,7 @@ return (
         </View>
         <Separator />
         <View style = {speedLayout.ridesFriends}>
-            <View style = {{justifyContent: 'space-between', height: 200}}>
+            <View style = {{justifyContent: 'space-between', height: 0.25*height}}>
                     {(runStatus === 2 || (runStatus === 8 && !paused) || (runStatus === 9 && !paused)) ?  <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(3)}>
                         <Image 
                             source={require('../../assets/icons/ExercisePause.png')}
@@ -493,7 +493,7 @@ return (
                   POSITION
                 </Text>
               </Text>
-              <View style = {{marginVertical: 8,
+              <View style = {{marginVertical: 0.01*height,
                               borderBottomColor: 'white',
                               borderBottomWidth: StyleSheet.hairlineWidth,
                               marginHorizontal: 0}}/>
@@ -636,23 +636,23 @@ const textStyle = StyleSheet.create({
   coloredRed: {
     color: 'red',
     textAlign: 'center',
-    fontSize: 18
+    fontSize: 0.0225*height
   },
 
   timeDisplay: {
     textAlign:'center',
-    fontSize: 80,
+    fontSize: 0.1*height,
     color: 'white'
   },
 
   distanceDisplay: {
     textAlign: 'center',
-    fontSize: 100,
+    fontSize: 0.125*height,
     color: 'white'
   },
 
   speedDisplay: {
-    fontSize:50,
+    fontSize:0.0625*height,
     color: 'white',
   }
 })
@@ -661,8 +661,8 @@ const buttonslayout = StyleSheet.create({
   SubmitButtonStyle: {
       justifyContent: 'center',
       alignItems: 'center',
-      width: 100,
-      height: 42,
+      width: 0.25*width,
+      height: 0.0525*height,
       marginLeft:1,
       marginRight:1,
       backgroundColor:'yellow',
@@ -672,8 +672,8 @@ const buttonslayout = StyleSheet.create({
   },
 
   roundButton1: {
-    width: 110,
-    height: 110,
+    width: 0.275*width,
+    height: 0.1375*height,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
@@ -683,8 +683,8 @@ const buttonslayout = StyleSheet.create({
     marginHorizontal: 12
   },
   roundButton2: {
-      width: 110,
-      height: 110,
+      width: 0.275*width,
+      height: 0.1375*height,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 10,
@@ -694,8 +694,8 @@ const buttonslayout = StyleSheet.create({
       marginHorizontal: 12
   },
   roundButton3: {
-        width: 40,
-        height: 40,
+        width: 0.1*width,
+        height: 0.05*height,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
@@ -707,16 +707,16 @@ const buttonslayout = StyleSheet.create({
 
 const speedLayout = StyleSheet.create({
   ridesFriends: {
-      paddingTop: 20,
+      paddingTop: 0.025*height,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       width: '100%',
-      marginBottom: 20,
+      marginBottom: 0.025*height,
       color:'white',
   },
   numbers: {
-      fontSize: 50,
+      fontSize: 0.0625*height,
       color: 'white',
       fontWeight: 'bold',
       textAlign:'center'
@@ -729,7 +729,7 @@ const speedLayout = StyleSheet.create({
   coloredRedspeed: {
       color: 'red',
       textAlign: 'center',
-      fontSize: 15
+      fontSize: 0.01875*height
   },
 })
 
@@ -738,7 +738,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderBottomColor: 'white',//'#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    marginHorizontal: 40
+    marginHorizontal: 0.05*height
   },
 });
 
