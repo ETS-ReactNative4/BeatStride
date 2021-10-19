@@ -27,6 +27,7 @@ export default function App() {
 
 function DistanceScreen({ navigation }) {
   const [empty, setEmpty] = useState(true);
+  const [type, setType] = useState();
 
   useEffect(() => {
     Firestore.db_requestList(
@@ -68,18 +69,18 @@ function DistanceScreen({ navigation }) {
                 </View>
             </View>
       <View style={styles.buttonbody}> 
-          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => navigation.navigate('Distance')}>
+          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => {setType(1)}}>
             <Text style={styles.buttonText}>Distance</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Speed')}>
+          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(2)}}>
             <Text style={styles.buttonText}>Speed</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Activity')}>
+          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(3)}}>
             <Text style={styles.buttonText}>Activity</Text>
           </TouchableOpacity> 
       </View>
       <View style={styles.content}>
-          <DistancePage />
+          <DistancePage type={type}/>
       </View>
     </View>
 
