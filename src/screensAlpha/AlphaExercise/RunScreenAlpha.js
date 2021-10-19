@@ -409,8 +409,8 @@ const RunScreenAlpha = ({navigation, route}) => {
 return (
       <View style={{backgroundColor: '#282B30',flex: 1}}>
       <View style={screenStyle.screen}>
-        <View>
-          <Text style={{textAlign:'center',color:'green', fontSize:height*0.03125}}>
+        <View style = {{height: height*0.05, width: width}}>
+          <Text style={{textAlign:'center',color:'green', fontSize:25}}>
             ACTIVE RACE
           </Text>
         </View>
@@ -443,24 +443,28 @@ return (
           </Text>
         </View>
         <View style = {speedLayout.ridesFriends}>
-          <Text style={speedLayout.numbers}>
-            0.01{"\n"}
-            <Text style={speedLayout.coloredRedspeed}>
-              CURRENT SPEED
-            </Text>
-          </Text>
+            <View style={{width:0.5*width, height:0.15*height - 4}}>
+                <Text style={speedLayout.numbers}>
+                {duration}
+                </Text>
+                <Text style={speedLayout.coloredRedspeed}>
+                CURRENT SPEED
+                </Text>
+            </View>
           <View style = {speedLayout.verticleLine}>
           </View>
-          <Text style={speedLayout.numbers}>
-            0.01{"\n"}
-            <Text style={speedLayout.coloredRedspeed}>
-              AVG SPEED
+          <View style={{width:0.5*width, height:0.15*height-4}}>
+            <Text style={speedLayout.numbers}>
+                {steps}
             </Text>
-          </Text>
+            <Text style={speedLayout.coloredRedspeed}>
+                STEPS
+            </Text>
+          </View>
         </View>
         <Separator />
-        <View style = {speedLayout.ridesFriends}>
-            <View style = {{justifyContent: 'space-between', height: 0.25*height}}>
+        <View style = {speedLayout.ridesFriendsBottom}>
+            <View style = {{justifyContent: 'space-evenly', height: 0.25*height, width:0.3*width, alignItems:'center'}}>
                     {(runStatus === 2 || (runStatus === 8 && !paused) || (runStatus === 9 && !paused)) ?  <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(3)}>
                         <Image 
                             source={require('../../assets/icons/ExercisePause.png')}
@@ -486,19 +490,22 @@ return (
             </View>
             <View style = {speedLayout.verticleLine}>
             </View>
-            <View>
-              <Text style={{fontSize: 50, color:'orange', textAlign:'center'}}>
-                  5{"\n"}
-                  <Text style={speedLayout.coloredRedspeed}>
-                  POSITION
-                </Text>
-              </Text>
+            <View style={{height:0.3*height, width:width*0.5, alignItems:'center', flexDirection: 'column'}}>
+                <View style={{height:0.1*height -4}}>
+                    <Text style={{fontSize: 50, color:'orange', textAlign:'center'}}>
+                        5{"\n"}
+                    </Text>
+                    <Text style={speedLayout.coloredRedspeed}>
+                        POSITION
+                    </Text>
+                </View>
               <View style = {{marginVertical: 0.01*height,
                               borderBottomColor: 'white',
-                              borderBottomWidth: StyleSheet.hairlineWidth,
-                              marginHorizontal: 0}}/>
+                              borderBottomWidth: 10, //StyleSheet.hairlineWidth,
+                              marginHorizontal: 0,
+                              height:0.03*height}}/>
               <View>
-                            <View style={{flexDirection: 'row'}}>
+              <View style={{flexDirection: 'row'}}>
                             <TouchableOpacity
                               onPress={() => Alert.alert('Button with adjusted color pressed')}
                               style={buttonslayout.roundButton3}>
@@ -509,7 +516,7 @@ return (
                                style={buttonslayout.SubmitButtonStyle}>
                                <Text style={{textAlign:'center'}}>Position 1</Text>
                             </TouchableOpacity>
-                            </View>
+              </View>
                             <View style={{flexDirection: 'row'}}>
                               <TouchableOpacity
                                 onPress={() => Alert.alert('Button with adjusted color pressed')}
@@ -623,8 +630,8 @@ const newstyles = StyleSheet.create({
 
 const screenStyle = StyleSheet.create({
   screen: {
-    marginHorizontal: 20,
-    marginVertical: 20,
+    //marginHorizontal: 20,
+    //marginVertical: 20,
   }
 })
 
@@ -636,18 +643,21 @@ const textStyle = StyleSheet.create({
   coloredRed: {
     color: 'red',
     textAlign: 'center',
-    fontSize: 0.0225*height
+    height: 0.05*height - 4,
+    fontSize:18
   },
 
   timeDisplay: {
     textAlign:'center',
-    fontSize: 0.1*height,
+    height: 0.1*height - 4,
+    fontSize: 80,
     color: 'white'
   },
 
   distanceDisplay: {
     textAlign: 'center',
-    fontSize: 0.125*height,
+    fontSize: 100,
+    height: 0.2*height - 4,
     color: 'white'
   },
 
@@ -662,43 +672,20 @@ const buttonslayout = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       width: 0.25*width,
-      height: 0.0525*height,
+      height: 0.05*height - 5,
       marginLeft:1,
       marginRight:1,
       backgroundColor:'yellow',
       borderRadius:10,
       borderWidth: 1,
-      borderColor: '#fff'
-  },
-
-  roundButton1: {
-    width: 0.275*width,
-    height: 0.1375*height,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 110,
-    backgroundColor: 'orange',
-    marginBottom: 5,
-    marginHorizontal: 12
-  },
-  roundButton2: {
-      width: 0.275*width,
-      height: 0.1375*height,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 10,
-      borderRadius: 110,
-      backgroundColor: 'pink',
-      marginBottom: 5,
-      marginHorizontal: 12
+      borderColor: '#fff',
+      marginBottom: 5
   },
   roundButton3: {
         width: 0.1*width,
-        height: 0.05*height,
+        height: 0.05*height - 5,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
         borderRadius: 40,
         backgroundColor: 'yellow',
         marginBottom: 5
@@ -707,13 +694,22 @@ const buttonslayout = StyleSheet.create({
 
 const speedLayout = StyleSheet.create({
   ridesFriends: {
-      paddingTop: 0.025*height,
+      height: 0.15*height - 4,
+      //paddingTop: 0.025*height,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       width: '100%',
-      marginBottom: 0.025*height,
       color:'white',
+  },
+  ridesFriendsBottom: {
+    height: 0.3*height - 4,
+    //paddingTop: 0.025*height,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    color:'white',
   },
   numbers: {
       fontSize: 0.0625*height,

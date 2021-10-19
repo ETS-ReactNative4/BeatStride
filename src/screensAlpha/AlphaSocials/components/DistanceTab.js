@@ -51,10 +51,20 @@ export default function DistancePage({ type }) {
 
     }, [])
 
+<<<<<<< HEAD
     useEffect(() => {
         if (uid != "") {
             Firestore.db_userhistoryView(uid,
                 (historyList) => { setHistory(historyList.reverse()) },
+=======
+    useEffect(()=> {
+        if (uid != "")
+        {
+            Firestore.db_userhistoryView( uid,
+                (historyList) => { 
+                    historyList.map((item)=>{item.userId = uid})
+                    setHistory(historyList.reverse()) },
+>>>>>>> 16ea4c04011c7d7f10962851c53cf19b8dde4455
                 (error) => { console.log('history view fail') }
             )
         }
@@ -103,18 +113,17 @@ export default function DistancePage({ type }) {
         }, [friendData, type])
 
     useEffect(() => {
-        if (pressuid != "") {
-            Firestore.db_userhistoryView(pressuid,
-                (historyList) => { setHistory(historyList.reverse()) },
+        if (pressuid != "")
+        {
+            Firestore.db_userhistoryView( pressuid,
+                (historyList) => { 
+                    historyList.map((item)=>{item.userId = pressuid})
+                    setHistory(historyList.reverse()) },
                 (error) => { console.log('history view fail') }
             )
         }
-    }, [pressuid, type])
-
-    filterHistory = (history, filterType) => {
-        console.log('Filter history by ' + filterType);
-        //sort history here
-    }
+    },[pressuid, type])
+    
 
     return (
         <View style={styles.container}>
@@ -164,6 +173,8 @@ export default function DistancePage({ type }) {
                                 date={item.date}
                                 mode={item.mode}
                                 id={item.id}
+                                selfuid={uid}
+                                userId = {item.userId}
                             />
                             <HistoryViewMap
                                 positions={item.positions}
