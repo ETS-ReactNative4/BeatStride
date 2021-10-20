@@ -22,8 +22,7 @@ const FriendItemHoriParticipant = (props) => {
     const [displayPicture, setDisplayPicture] = useState({uri: ""});
     const [userData, setUserData] = useState({});
 
-    const addedFriendList=props.addedFriendList;
-    const setAddedFriendList=props.setAddedFriendList;
+
 
     const [num,setNum]=useState(Math.floor(Math.random() * 10))
     const [defaultDisplayPicture, setDefautDisplayPicture]=useState({0:require('../../../assets/icons/DefaultProfile/pfp0.png'),
@@ -59,9 +58,11 @@ const FriendItemHoriParticipant = (props) => {
     }, [])
 
     return (
-        <TouchableOpacity onPress={() => {
-            //setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='SPACE';}))
-            setAddedFriendList(addedFriendList.filter(item => item.uid !== uid));}}>
+        <TouchableOpacity 
+            
+            onLongPress={()=>{
+                console.log("LONG PRESSSSS")
+                Firestore.db_deleteFriendFromGame(uid)}}>
             <View style={styles.componentContainer}>
                 
                 {/* profile image */}

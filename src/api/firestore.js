@@ -1024,6 +1024,22 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     }
 }
 
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requestSelftoGame = async( friend_id ,type, distance, overallTime) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        db_setGameInviteStatus(friend_id, user_id, "accept", type, distance, overallTime);
+        db_setGameRoomParticipants('game'+user_id,user_id,friend_id,"accept", type , distance, overallTime);
+        db_setGameRoomSettings('game'+user_id,user_id,friend_id,"accept", type , distance, overallTime);
+    } catch (error) {
+        console.log("Fail to send game request")
+    }
+}
 
 
 /**
@@ -1224,4 +1240,22 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     } catch (error) {
         console.log("Fail to delete Run History record");
     }
+}
+
+/**
+ * This is a helper method to delete participant that owner remove.
+ * 
+ * @param {String} friend_id   A String representing the friend id stored in Firestore.
+ */
+ export const db_deleteGameSettings = ( gameKey ) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    try {
+        db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey).delete();
+        //update friend gameInvite
+    } catch (error) {
+        console.log("Fail to delete gameRoom settings")
+    }
+
+
 }

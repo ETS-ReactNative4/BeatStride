@@ -29,12 +29,17 @@ const UserPrivateInfo = (props) => {
      * This is a render effect based on "userData" state.
      */
     useEffect(() => {
-        setTotalDistance(userData.totalDistance);
-        setRunCount(userData.runCount);
-        setLongestDistance(userData.longestDistance);
-        setFastestPace(userData.fastestPace);
-        setStrideDistance(userData.strideDistance);
-        setJoinDate(userData.joinDate);
+        //console.log(userData)
+        if(userData!=null){
+            console.log(userData)
+            setTotalDistance(userData.totalDistance);
+            setRunCount(userData.runCount);
+            setLongestDistance(userData.longestDistance);
+            setFastestPace(userData.fastestPace);
+            setStrideDistance(userData.strideDistance);
+            setJoinDate(userData.joinDate);
+        }
+        
     }, [userData])
 
     /* [Page Scrolling] */

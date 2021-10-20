@@ -147,6 +147,10 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                             console.log("KICKEDOUT")
                             setAllowBack(true)
                         }
+                        if(!userList.some(item=>item.uid===organiserID )){
+                            console.log("KICKEDOUT")
+                            setAllowBack(true)
+                        }
                     }
                     var self=userList[userList.findIndex(item => item.uid==selfID)]
                     console.log("Self")
@@ -195,7 +199,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                     [ { text:"Cancel", onPress: () => {} }, 
                     { text:"Confirm", onPress: () => {
                         setAllowBack(true);
-                        delineInvite()} }]
+                        declineInvite()} }]
                 )
             }
         });
@@ -252,8 +256,9 @@ const LobbyParticipantScreen = ({navigation, route}) => {
         // }
     }
 
-    const delineInvite=()=>{
+    const declineInvite=()=>{
         Firestore.db_declineRequestFriendtoGame( organiserID);
+        setAllowBack(true);
        
     }
 
@@ -383,7 +388,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                         <Text style={styles.startButtonColor}>Start</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                        delineInvite()
+                        declineInvite()
                         //setChooseState(true) 
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
                     }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView,  StyleSheet,  Text,  View, Dimensions, FlatList, Keyboard , Image, TouchableOpacity} from 'react-native';
+import { SafeAreaView,  StyleSheet,  Text,  View, Dimensions, FlatList, Keyboard , Image, TouchableOpacity,Alert} from 'react-native';
 import { TextInput } from "react-native-paper";
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import * as Firestore from '../../api/firestore';
@@ -8,6 +8,7 @@ import FriendItem from './components/FriendItem';
 import FriendItemHori from './components/FriendItemHori';
 import FriendItemHoriParticipant from './components/FriendItemHoriParticipant';
 import moment from 'moment';
+import { CommonActions } from '@react-navigation/native'; 
 
 var PickerItem = Picker.Item;
 
@@ -48,6 +49,8 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
     const [empty,setEmpty]=useState(true)
 
+    const[allowBack,setAllowBack]=useState(false)
+    const [deleteAll,setDeleteAll]=useState(false)
     /**
      * This helper method is a comparator to compare the keyword in the search bar to the displayName field in the userData.
      * @param {Object} userData     A object which contains the user information retrieved from Firestore.
@@ -173,11 +176,26 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
     const sentInvite=()=>{
         setChooseState(false)
 
-        Firestore.db_requestFriendtoGame( selfID ,raceParam, distance, overallTimeString)
+        Firestore.db_requestSelftoGame( selfID ,raceParam, distance, overallTimeString)
         for (var i=0;i<addedFriendList.length;i++) {
-            if(!addedFriendList.some(item=>item.uid===friendListFireStore[i].uid )){
-                Firestore.db_requestFriendtoGame( addedFriendList[i].uid ,raceParam, distance, overallTimeString)
-            }
+
+                // var statusOfThis='decline';
+                // console.log("i"+i+"   "+friendListFireStore.findIndex((item)=>{return (item.uid ===addedFriendList[i].uid)}))
+
+                // if(friendListFireStore.findIndex((item)=>{return (item.uid ===addedFriendList[i].uid)})){
+                //    //console.log(friendListFireStore[friendListFireStore.findIndex((item)=>{return (item.uid ===addedFriendList[i].uid)})].status)
+                //    statusOfThis=friendListFireStore[friendListFireStore.findIndex((item)=>{return (item.uid ===addedFriendList[i].uid)})].status
+                // }
+
+                // if(statusOfThis!="accept"){
+                //     console.log("in IFFFFFFFFFFFFFFFFFFFFFFFFF"+i+"   "+statusOfThis)
+                //     Firestore.db_requestFriendtoGame( addedFriendList[i].uid ,raceParam, distance, overallTimeString)
+                // }
+                if(addedFriendList[i].status!='accept'){
+                    Firestore.db_requestFriendtoGame( addedFriendList[i].uid ,raceParam, distance, overallTimeString)
+                }
+                
+            
         }
 
         for (var i=0;i<friendListFireStore.length;i++){
@@ -200,6 +218,48 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
         // }
     }
 
+
+    useEffect(() => {
+        const back = navigation.addListener('beforeRemove', (e) => {
+            if (!allowBack) {
+                e.preventDefault();
+                Alert.alert(
+                    "Cancel Race",
+                    "Are you sure you want to leave the race? The event will be cancelled for everyone.",
+                    [ { text:"Cancel", onPress: () => {} }, 
+                    { text:"Confirm", onPress: () => {
+                        delineAllInvite()} }]
+                )
+            }
+        });
+        return back;
+    } )
+
+    useEffect(() => {
+        if(allowBack){
+            navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
+            setAllowBack(false)
+        }
+    }, [allowBack])
+
+
+    const delineAllInvite=()=>{
+        for (var i=0;i<friendListFireStore.length;i++)
+        {
+            Firestore.db_deleteFriendFromGame( friendListFireStore[i].uid);
+        }
+        
+        setAllowBack(true);
+       
+    }
+
+    useEffect(() => {
+        if(friendListFireStore.length==0 && deleteAll==true){
+            Firestore.db_deleteGameSettings ('game'+selfID);
+            setDeleteAll(false);
+        }
+
+    }, [friendListFireStore])
     return (
         <SafeAreaView style={styles.screen}>
             <View style={{height:0.12*height, flexDirection:'row', justifyContent:'space-between'}}>
@@ -356,6 +416,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
                         setChooseState(true) 
+                        setAddedFriendList(friendListFireStore.filter((item)=>{return((item.status=='request'||item.status=='accept')&&item.uid!=selfID)}))
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
                     }}>
                         <Text style={{...styles.startButtonColor,backgroundColor:'transparent',borderWidth:3,borderColor:'#7289D9',}}>Edit Invite</Text>
@@ -393,10 +454,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
                     data={friendListFireStore}
                     keyExtractor={item => item.uid}
-                    renderItem={({item}) => <FriendItemHoriParticipant item={item} 
-                        
-                        addedFriendList={addedFriendList} 
-                        setAddedFriendList={(newList)=>setAddedFriendList(newList)}/>}
+                    renderItem={({item}) => <FriendItemHoriParticipant item={item} />}
                     ListEmptyComponent={
                         <View style={styles.emptyList}>
                         </View>
