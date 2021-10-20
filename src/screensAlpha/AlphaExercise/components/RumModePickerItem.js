@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         alignContent:'flex-start',
         width: width * 0.475-1,
         height: height * 0.1, 
-        overflow:'hidden'
+        overflow:'hidden',
         //borderBottomWidth: 1,
         //borderRightWidth:1,
         //borderBottomColor:'#bfbfbf',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         paddingTop: height * 0.04 * 0.3,
 
         //backgroundColor: 'green',//Test
-        alignItems:'flex-start'
+        alignItems:'flex-start',
     },
     titleText:{
         fontWeight: 'bold',

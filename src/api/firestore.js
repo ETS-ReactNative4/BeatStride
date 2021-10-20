@@ -773,7 +773,44 @@ const db_updateBirthday = (data) => {
 
 
 
+/**  
+ * This is a method to obtain the friend's data using uID list 
+ *  
+ * @param {List} uidList Is a list containing the uID of user's friends. 
+ * @param {Function} onSuccess A function to be triggered upon success. 
+ * @param {Function} onError    A function to be triggered on error. 
+ * @returns  
+*/ 
+ 
+export const db_queryFriendsData = ( uidList , onSuccess, onError ) => { 
+    try { 
+        db.collection('users') 
+        // Filter results 
+        .where('uid', 'in', uidList) 
+        .get() 
+        .then(collection => { 
+            const userList = collection.docs.map((doc) => doc.data()); 
+            return onSuccess(userList); 
+        }) 
+    } catch (error) { 
+        return onError(error); 
+    } 
+     
+}
 
+export const db_userhistoryView = (uid, onSuccess, onError) => {
+    const user_id = uid;
+    try {
+        db.collection("users").doc(user_id)
+        .collection("history")
+        .onSnapshot((collection) => {
+            const historyList = collection.docs.map((doc) => doc.data());
+            return onSuccess(historyList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
 
 
 

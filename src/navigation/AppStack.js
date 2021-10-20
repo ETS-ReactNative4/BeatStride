@@ -25,9 +25,13 @@ import ChangePasswordScreen from '../screens/Profile/ChangePasswordScreen';
 import ForgotPasswordScreen from '../screens/Onboarding/ForgotPasswordScreen';
 import GoalSettingScreen from '../screens/Exercise/GoalSettingScreen';
 
+//arron
+import AlphaEditMeScreen from '../screensAlpha/AlphaMe/AlphaEditMeScreen';
 // Omkar
 import RunScreenAlpha from '../screensAlpha/AlphaExercise/RunScreenAlpha';
 import AlphaEndScreen from '../screensAlpha/AlphaExercise/AlphaEndScreen';
+//WeiJian
+import AlphaUserProfileScreen from '../screensAlpha/AlphaSocials/UserProfileScreen';
 
 //Barnabas
 import LobbyOrganiserScreen from '../screensAlpha/AlphaExercise/LobbyOrganiserScreen';
@@ -206,6 +210,13 @@ const AppStack = () => {
                     }
                 }}
             />
+            {/*Arron's Edit*/}
+            <Stack.Screen
+                key="AlphaEditMeScreen"
+                name="AlphaEditMeScreen"
+                component={AlphaEditMeScreen}
+            />
+
             {/* Added by Omkar */}
             <Stack.Screen
                 key="RunScreenAlpha"
@@ -219,7 +230,23 @@ const AppStack = () => {
                 component={AlphaEndScreen}
                 options={{headerShown: false}}
             />
-
+            {/* Added by WeiJian */}
+            <Stack.Screen
+                key="AlphaUserProfileScreen"
+                name="AlphaUserProfileScreen"
+                component={AlphaUserProfileScreen}
+                options={{
+                    title: "User Profile ",
+                    headerStyle: {
+                        backgroundColor: '#1E2124',
+                        height: height * 0.1,
+                    },
+                    headerTintColor: '#BABBBF',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }}
+            />
             {/* Added by Barnabas */}
             <Stack.Screen
                 key="LobbyOrganiserScreen"
