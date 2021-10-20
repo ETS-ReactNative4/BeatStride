@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Text,Image,View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import React, { useState, useEffect,useRef } from 'react';
+import { Text,Image,View, StyleSheet, Dimensions, ScrollView,FlatList } from 'react-native';
 //Barn
 // import TempoRun from './TempoRun';
 // import BasicRun from './BasicRun';
@@ -10,6 +10,15 @@ import * as LocationLib from '../../../api/LocationPermissions';
 import * as Location from 'expo-location'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native'; 
+import FriendItem from './FriendInviteItem';
+import * as Firestore from '../../../api/firestore';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import Animated,{
+    useSharedValue,
+    useAnimatedStyle, 
+    interpolate,
+    withTiming,
+} from 'react-native-reanimated';
 const {width, height} = Dimensions.get("window")
 
 
@@ -20,6 +29,7 @@ const {width, height} = Dimensions.get("window")
  * @author NTU CZ2006 Team Alpha
  */
 const RunTab = (props) => {
+    const translation=useSharedValue(0);
     const navigation = useNavigation();
     const [runStatus, setRunStatus] = useState(0);              //Status of activity
     const [mapPositions, setMapPositions] = useState([])
@@ -54,6 +64,13 @@ const RunTab = (props) => {
     const audioListIdx=props.audioListIdx;
     const setAudioListIdx=props.setAudioListIdx;
 
+    //For Game Invite
+    const [friendList , setFriendList] = useState([]);
+    const [empty, setEmpty]= useState(true);
+    const [gameInviteList,setGameInviteList]=useState([]);
+    const [oragniserDisplayPicture, setOragniserDisplayPicture] = useState({uri:"https://images.unsplash.com/photo-1474978528675-4a50a4508dc3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTZ8fHByb2ZpbGV8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"})
+    const [organiserDisplayName, setOrganiserDisplayName] = useState('');
+    const [organiserUserData, setOrganiserUserData] = useState({});
     // // /**
     // //  * Begining UseEffect
     // //  */
@@ -62,8 +79,59 @@ const RunTab = (props) => {
         // getCurrentLocation();
         // subscribePosition();
         //     setRunStatus(1);  
-    } , [])
+
+        Firestore.db_friendsList(
+            (userList) => {
+                setFriendList(userList)
+                console.log(userList)
+                // console.log(userList)
+            },
+            (error) => {console.log(error)},
+        )
+
+        //A subscribes to any changes on the database
+        Firestore.db_gameRequestListonSnapshot(
+            (userList) => {
+                if (userList.length == 0) {
+                    
+                    setEmpty(true);
+                } else {
+                    // translation.value=withTiming(width * 0.425,{
+                    //     duration:400
+                    // });
+                    setEmpty(false);
+                    setGameInviteList(userList)
+                }  
+            },
+            (error) => {console.log(error)},
+        )
         
+
+        
+
+    } , [])
+
+    useEffect(() => {
+
+        
+        if(gameInviteList.length!=0){
+            console.log("#########################################################################################"+gameInviteList[0].creator)
+            Firestore.db_getOtherDataSnapshot(
+                gameInviteList[0].creator,
+                (userData) => {
+                    setOrganiserUserData(userData)
+                    setOrganiserDisplayName(userData.displayName)
+                    // console.log(userData)
+                },
+                (error) => {console.log(error)},
+            );
+            Firestore.storage_retrieveOtherProfilePic(gameInviteList[0].creator, setOragniserDisplayPicture, () => {});
+        }
+        
+    }, [gameInviteList])
+    
+
+
     // /**
     //  * This is a method to check for device's foreground location permission.
     //  */
@@ -220,6 +288,55 @@ const RunTab = (props) => {
         }
     },[status])
 
+    
+    //const [toggleIN, settoggleIN] = useState(0);
+    const animatedStyle=useAnimatedStyle(()=>{
+        return{
+            opacity:interpolate(
+                translation.value,
+                [-width*0.4,width * 0.425],
+                [0,0.8]
+            ),
+            transform:[
+                {
+                    translateX:translation.value,
+
+                },
+//                 {
+//                     scale:interpolate(
+//                         translation.value,
+//                         [0,100],
+//                         [0.5,1])
+// ,
+//                 }
+            ],
+        };
+    });
+    useEffect(() => {
+        //console.log("RunModePicker "+typeListIdx+typeList.findIndex((item)=>{return item.name ==='TIME'})+" "+typeList[typeListIdx].name)
+        //console.log("Empty:"+empty+"type:"+ (typeListIdx==typeList.findIndex((item)=>{return item.name ==='TIME'})))
+        console.log("Empty:"+empty+"type:"+typeList[typeListIdx].name+ (typeList[typeListIdx].name==='TIME')+"#################################################" )
+        if(!empty && (typeList[typeListIdx].name==='TIME')){
+            console.log("Entered")
+
+            translation.value=withTiming(width * 0.425,{
+                duration:400
+            });
+        }else {
+            translation.value=withTiming(0,{
+                duration:400
+            });
+        }
+        
+    }, [empty, typeListIdx,organiserUserData])
+
+    const decline=()=>{
+        if (organiserUserData!=null){
+            Firestore.db_declineRequestFriendtoGame( organiserUserData.uid);
+        }
+        
+    }
+
     return (
         <ScrollView 
             style={styles.contentContainer}
@@ -267,12 +384,87 @@ const RunTab = (props) => {
                 />
                 <View style={styles.startButton}>
                     <TouchableOpacity onPress={() => {
-                        setStatus(6),
-                        navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                        setStatus(6);
+                        console.log("STARTEDDDDD "+ typeList[typeListIdx].name)
+                        if (typeList[typeListIdx].name=='SPACE'){
+                            navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                        }else if(typeList[typeListIdx].name=='TIME'){
+                            navigation.navigate("LobbyOrganiserScreen",{mode: "Time", chooseState:true})
+                        }
                     }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>
                 </View>
+
+                <Animated.View style={[{
+                position: 'absolute', 
+                width: width*0.4, 
+                height: height * 0.2, 
+                alignItems:'center', 
+                justifyContent:'center',        
+                left: (width * 0.025) -(width * 0.025)-width*0.4,
+                top: height * (0.4-0.2)-10, 
+                //backgroundColor:'pink' ,
+                
+                },animatedStyle]}>
+                    {/* <FlatList
+                        showsVerticalScrollIndicator ={false}
+                        style={styles.list}
+                        contentContainerStyle={styles.listContent}
+                        numColumns={1}
+                        data={friendList }
+                        keyExtractor={item => item.uid}
+                        renderItem={({item}) => <FriendItem item={item}/>}
+                        ListEmptyComponent={
+                            <View style={styles.emptyList}>
+                                <View style={styles.emptyIcon}>
+                                    <FontAwesome name="search" size={height * 0.04} color="#72767D"/>
+                                </View> 
+                                <Text style={styles.emptyText}>Search for Users by</Text>
+                                <Text style={styles.emptyText}>Name or ID</Text>
+                            </View>
+                        }
+                    /> */}
+                    <View style={{width: width*0.4, height: height * 0.2, backgroundColor:'rgba(28, 34, 34, 1)',borderRadius:15,alignItems:'center',justifyContent:'space-evenly',overflow:'hidden'}}>
+                        <View style={styles.nameContainer}>
+                            <Text style={styles.nameText} numberOfLines={1}>Time Racing</Text>
+                        </View>
+                        {/* profile image */}
+                        <View style={{...styles.pictureContainer  }}>
+                            { (oragniserDisplayPicture.uri != "") &&
+                                <Image style={styles.pictureContainer} source={oragniserDisplayPicture} />
+                            }
+                        </View>
+                        {/* Display name */}
+                        <View style={styles.nameContainer}>
+                            <Text style={styles.nameText} numberOfLines={1}>{(organiserDisplayName.length>6)?(organiserDisplayName.slice(0,6)+"..."):(organiserDisplayName)}</Text>
+                        </View>
+                        {/* Accept Decline Button */}
+                        <View style={{height: height*0.06,width: width*0.4,justifyContent:'space-evenly',alignItems:'center',backgroundColor:"green",flexDirection:'row'}}>
+                            <TouchableOpacity style={styles.button} onPress={() => {
+                                    if(gameInviteList.length!=0){
+                                        navigation.navigate("LobbyParticipantScreen",{mode: "Time", chooseState:false, gameInviteData:gameInviteList[0]})
+                                    }
+                                }}>
+                                <Image 
+                                    source={require('../../../assets/icons/RunTabAcceptButton.png')}
+                                    resizeMode= 'contain'
+                                    style={{...styles.buttonIcon,tintColor:'green'}}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={() => decline()}>
+                                <Image 
+                                    source={require('../../../assets/icons/RunTabDeclineButton.png')}
+                                    resizeMode= 'contain'
+                                    style={{...styles.buttonIcon,tintColor:'red'}}
+                                />
+                            </TouchableOpacity>   
+                        </View>
+
+                    </View>
+                
+                </Animated.View>
+                
                 <View style={{...styles.mapMode, width: (gpsMode=="track")?80:100,}}>
                     <TouchableOpacity onPress={()=>{
                         if (gpsMode=='track'){
@@ -281,6 +473,12 @@ const RunTab = (props) => {
                         else{
                             setGpsMode('track');
                         }
+                        // if(toggleIN==1){
+                        //     settoggleIN(0)
+                        // }else{
+                        //     settoggleIN(1)
+                        // }
+                        
                     }}>
                         <View style={{...styles.mapModeContainer, width: (gpsMode=="track")?80:100,}}>
                             {(gpsMode=='track')?
@@ -312,7 +510,8 @@ const RunTab = (props) => {
                 style={styles.contentContainer}
             />
             </TouchableOpacity>
-            
+
+
             }
            
             {/* <TempoRun/>
@@ -408,8 +607,45 @@ const styles = StyleSheet.create({
             tintColor: 'rgba(79,83,92,0.5)',
             //backgroundColor:'pink'
         },
+    button:{
+            height: height * 0.05,
+            aspectRatio: 1,
+            borderRadius: height,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#7289DA',
+            overflow:'hidden',
+        },
+    buttonIcon:{
+            // height: height * 0.05,
+            // aspectRatio: 1,
+            height: height * 0.05,
+            borderRadius: height,
+            tintColor: '#BABBBF',
+            resizeMode:'contain'
+        },
+    pictureContainer:{
+            height: height * 0.1,
+            aspectRatio: 1,
+            borderRadius: height,
+            backgroundColor: '#4F535C',
+        },
     
+    nameContainer:{
+            height: height * 0.02,
+            width: height * 0.12,
+            //justifyContent: 'center',
+            //backgroundColor: 'purple',
+        },
+    nameText:{
+            height: height * 0.02,
+            fontWeight: 'bold',
+            fontSize: 12,
+            color: '#FFFFFF',
+            //backgroundColor:'blue',
+            textAlign:'center',
     
+        },
     
 })
 

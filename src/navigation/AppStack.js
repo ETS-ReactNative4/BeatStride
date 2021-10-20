@@ -29,6 +29,11 @@ import GoalSettingScreen from '../screens/Exercise/GoalSettingScreen';
 import RunScreenAlpha from '../screensAlpha/AlphaExercise/RunScreenAlpha';
 import AlphaEndScreen from '../screensAlpha/AlphaExercise/AlphaEndScreen';
 
+//Barnabas
+import LobbyOrganiserScreen from '../screensAlpha/AlphaExercise/LobbyOrganiserScreen';
+import LobbyOrganiserScreen2 from '../screensAlpha/AlphaExercise/LobbyOrganiserScreen2';
+import LobbyParticipantScreen from '../screensAlpha/AlphaExercise/LobbyParticipantScreen';
+
 const {width, height} = Dimensions.get("window")
 
 const Stack = createStackNavigator();
@@ -213,6 +218,56 @@ const AppStack = () => {
                 name="AlphaEndScreen"
                 component={AlphaEndScreen}
                 options={{headerShown: false}}
+            />
+
+            {/* Added by Barnabas */}
+            <Stack.Screen
+                key="LobbyOrganiserScreen"
+                name="LobbyOrganiserScreen"
+                component={LobbyOrganiserScreen}
+                options={{
+                    title: "Time Racing Lobby",
+                    headerStyle: {
+                        backgroundColor: '#1E2124',
+                        height: height * 0.1,
+                    },
+                    headerTintColor: '#BABBBF',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }}
+            />
+            <Stack.Screen
+                key="LobbyOrganiserScreen2"
+                name="LobbyOrganiserScreen2"
+                component={LobbyOrganiserScreen2}
+                options={{
+                    title: "Time Racing Lobby 2",
+                    headerStyle: {
+                        backgroundColor: '#1E2124',
+                        height: height * 0.1,
+                    },
+                    headerTintColor: '#BABBBF',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }}
+            />
+            <Stack.Screen
+                key="LobbyParticipantScreen"
+                name="LobbyParticipantScreen"
+                component={LobbyParticipantScreen}
+                options={{
+                    title: "Time Racing Lobby Participant",
+                    headerStyle: {
+                        backgroundColor: '#1E2124',
+                        height: height * 0.1,
+                    },
+                    headerTintColor: '#BABBBF',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }}
             />
         </Stack.Navigator>
     );
