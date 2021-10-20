@@ -51,12 +51,6 @@ export default function DistancePage({ type }) {
 
     }, [])
 
-<<<<<<< HEAD
-    useEffect(() => {
-        if (uid != "") {
-            Firestore.db_userhistoryView(uid,
-                (historyList) => { setHistory(historyList.reverse()) },
-=======
     useEffect(()=> {
         if (uid != "")
         {
@@ -64,7 +58,6 @@ export default function DistancePage({ type }) {
                 (historyList) => { 
                     historyList.map((item)=>{item.userId = uid})
                     setHistory(historyList.reverse()) },
->>>>>>> 16ea4c04011c7d7f10962851c53cf19b8dde4455
                 (error) => { console.log('history view fail') }
             )
         }
