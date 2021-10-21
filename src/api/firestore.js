@@ -1,5 +1,6 @@
 import firebase from "./firebase";
 import * as Authentication from "./auth";
+import moment from "moment";
 
 // const auth = firebase.auth();
 const db = firebase.firestore();
@@ -770,6 +771,8 @@ const db_updateBirthday = (data) => {
     }
 }
 
+
+
 /**  
  * This is a method to obtain the friend's data using uID list 
  *  
@@ -807,4 +810,452 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     } catch (error) {
         return onError(error);
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Barnabas For Time Run Lobby
+
+
+/**
+ * This is a helper method that initiates a gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {moment.duration} overallTime A moment.duration object representing total time of race. 
+ */
+ const db_setGameInviteStatus = ( uid1, uid2, status, type , distance, overallTime) => {
+
+
+       try {
+        db.collection("users").doc(uid1).collection("gameInvite").doc(uid2)
+        .set({status: status,
+            uid:uid1,
+
+            creator:uid2,
+            gameKey:'game'+uid2 ,
+
+            // raceType:type ,
+            // EndCondition: distance, 
+            // measurement:0,
+            },
+            {merge: true});
+        // console.log("success")
+        } catch (error) {
+            console.log("Fail to set friend Game Invite status")
+        } 
+    
+}
+
+/**
+ * This is a helper method that initiates a gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {String} overallTime A moment.duration object representing total time of race. 
+ */
+ const db_setGameRoomParticipants = ( gameKey, uid1,uid2 ,status, type , distance, overallTime) => { 
+
+       try {
+        db.collection("game").doc(gameKey).collection("gameInvite").doc(uid2)
+        .set({
+            status: status,
+            uid:uid2,
+
+            creator:uid1,
+            gameKey:gameKey ,
+
+            // raceType:type ,
+            // EndCondition: distance, 
+            measurement:0,
+            },
+            {merge: true});
+        // console.log("success")
+        } catch (error) {
+            console.log("Fail to set Game Room")
+        } 
+
+
+    
+}
+
+/**
+ * This is a helper method that initiates a gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {String} overallTime A moment.duration object representing total time of race. 
+ */
+ const db_setGameRoomSettings = ( gameKey, uid1,uid2 ,status, type , distance, overallTime) => {
+    if(type=='Distance'){   
+
+       try {
+        db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey)
+        .set({
+            //status: status,
+            //uid:uid2,
+
+            creator:uid1,
+            gameKey:gameKey ,
+
+            raceType:type ,
+            //EndConditionTime: overallTime, 
+            EndConditionDistance: distance,
+            //measurement:0,
+            },
+            {merge: true});
+        // console.log("success")
+        } catch (error) {
+            console.log("Fail to set Game Room")
+        } 
+
+    }else if(type=='Time'){
+
+        try {
+         db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey)
+         .set({//status: status,
+            //uid:uid2,
+
+            creator:uid1,
+            gameKey:gameKey ,
+            
+            raceType:type ,
+            EndConditionTime: overallTime, 
+            //EndConditionDistance: overallTime,
+            //measurement:0,
+            },
+            {merge: true});
+         // console.log("success")
+         } catch (error) {
+             console.log("Fail to set Game Room")
+         } 
+     }
+    
+}
+
+
+
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requestFriendtoGame = async( friend_id ,type, distance, overallTime) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        db_setGameInviteStatus(friend_id, user_id, "request", type, distance, overallTime);
+        db_setGameRoomParticipants('game'+user_id,user_id,friend_id,"request", type , distance, overallTime);
+        db_setGameRoomSettings('game'+user_id,user_id,friend_id,"request", type , distance, overallTime);
+    } catch (error) {
+        console.log("Fail to send game request")
+    }
+}
+
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requestSelftoGame = async( friend_id ,type, distance, overallTime) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        db_setGameInviteStatus(friend_id, user_id, "accept", type, distance, overallTime);
+        db_setGameRoomParticipants('game'+user_id,user_id,friend_id,"accept", type , distance, overallTime);
+        db_setGameRoomSettings('game'+user_id,user_id,friend_id,"accept", type , distance, overallTime);
+    } catch (error) {
+        console.log("Fail to send game request")
+    }
+}
+
+
+/**
+ * This is a helper method that initiates a gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {moment.duration} overallTime A moment.duration object representing total time of race. 
+ */
+ const db_setDeclineGameInviteStatus = ( uid1, uid2, status) => {
+        try {
+            db.collection("users").doc(uid1).collection("gameInvite").doc(uid2)
+            .set({status: status,},
+                {merge: true});
+            console.log("success")
+        } catch (error) {
+            console.log("Fail to decline friend Game Invite status")
+        } 
+    
+}
+
+/**
+ * This is a helper method that decline gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {moment.duration} overallTime A moment.duration object representing total time of race. 
+ */
+ const db_setDeclineGameRoom = ( gameKey, uid1,uid2 ,status ) => {
+        try {
+            db.collection("game").doc(gameKey).collection("gameInvite").doc(uid1)
+            .set({
+                status: status,},
+                {merge: true});
+            console.log("success")
+        } catch (error) {
+            console.log("Fail to decline Game Room")
+        } 
+    
+}
+
+/**
+ * This is the main method for a user to decline a request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_declineRequestFriendtoGame = async( friend_id) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        db_setDeclineGameInviteStatus(user_id, friend_id, "decline" );
+        db_setDeclineGameRoom('game'+friend_id,user_id,friend_id,"decline" );
+    } catch (error) {
+        console.log("Fail to decline game request")
+    }
+}
+
+/**
+ * This is the main method for a user to decline a request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_acceptRequestFriendtoGame = async( friend_id) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        db_setDeclineGameInviteStatus(user_id, friend_id, "accept" );
+        db_setDeclineGameRoom('game'+friend_id,user_id,friend_id,"accept" );
+    } catch (error) {
+        console.log("Fail to decline game request")
+    }
+}
+
+
+/**
+ * This is a method to obtain a list of friend requests.
+ * 
+ * @param {Function} onSuccess  A function to be triggered upon success.
+ * @param {Function} onError    A function to be triggered on error.
+ * @returns 
+ */
+ export const db_gameRequestListonSnapshot = (onSuccess, onError) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("users")
+        .doc(user_id).collection("gameInvite")
+        .where('status', '==', 'request')
+        .onSnapshot((collection) => {
+            const userList = collection.docs.map((doc) => doc.data());
+            return onSuccess(userList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+
+
+/**
+ * This is a method to obtain the list of gameRoomParticipantList.
+ * @param {String} gameKey  A string Key to access gameRoom.
+ * @param {Function} onSuccess  A function to be triggered upon success.
+ * @param {Function} onError    A function to be triggered on error.
+ * @returns 
+ */
+ export const db_gameRoomParticipantListonSnapShot = (gameKey,onSuccess, onError) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("game")
+        .doc(gameKey).collection("gameInvite")
+        .orderBy('status')
+        .onSnapshot((collection) => {
+            const userList = collection.docs.map((doc) => doc.data());
+            return onSuccess(userList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+/**
+ * This is a method to obtain the list of gameRoomParticipantList.
+ * @param {String} gameKey  A string Key to access gameRoom.
+ * @param {Function} onSuccess  A function to be triggered upon success.
+ * @param {Function} onError    A function to be triggered on error.
+ * @returns 
+ */
+ export const db_gameRoomSettingsonSnapShot = (gameKey,onSuccess, onError) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    
+    try {
+        db.collection("game")
+        .doc(gameKey).collection("gameSettings")
+        .onSnapshot((collection) => {
+            const userList = collection.docs.map((doc) => doc.data());
+            return onSuccess(userList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+
+
+/**
+ * This is a helper method to delete participant that owner remove.
+ * 
+ * @param {String} friend_id   A String representing the friend id stored in Firestore.
+ */
+ export const db_deleteFriendFromGame = ( friend_id ) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    try {
+        //update friend gameInvite
+        db_deleteGameInviteStatus(friend_id);
+        db_deleteParticiapntfromGameRoom(friend_id);
+    } catch (error) {
+        console.log("Fail to decline game request")
+    }
+
+
+}
+
+/**
+ * This is a helper method to delete participant invite. 
+ * 
+ * @param {String} friend_id   A String representing the friend id stored in Firestore.
+ */
+ const db_deleteGameInviteStatus = ( friend_id ) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    try {
+        // console.log(recordID);
+        db.collection("users").doc(friend_id).collection("gameInvite").doc(user_id).delete();
+    } catch (error) {
+        console.log("Fail to delete Run History record");
+    }
+}
+
+/**
+ * This is a helper method to delete participant from Game Room 
+ * 
+ * @param {String}  friend_id   A String representing the friend id stored in Firestore.
+ */
+ const db_deleteParticiapntfromGameRoom = ( friend_id ) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    try {
+        // console.log(recordID);
+        db.collection("game").doc('game'+user_id).collection("gameInvite").doc(friend_id).delete();
+    } catch (error) {
+        console.log("Fail to delete Run History record");
+    }
+}
+
+/**
+ * This is a helper method to delete participant that owner remove.
+ * 
+ * @param {String} friend_id   A String representing the friend id stored in Firestore.
+ */
+ export const db_deleteGameSettings = ( gameKey ) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    try {
+        db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey).delete();
+        //update friend gameInvite
+    } catch (error) {
+        console.log("Fail to delete gameRoom settings")
+    }
+
+
 }

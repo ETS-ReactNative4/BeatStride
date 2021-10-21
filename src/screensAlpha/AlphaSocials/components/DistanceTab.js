@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get("window")
 
 
 
-export default function DistancePage() {
+export default function DistancePage({ type }) {
 
     const [friendList, setFriendList] = useState([]);
     const [displayPicture, setDisplayPicture] = useState({ uri: "" });
@@ -23,6 +23,7 @@ export default function DistancePage() {
     const [friendData, setFriendData] = useState([]);
     const [uid, setuid] = useState("");
     const [pressuid, setPressuid] = useState("");
+    console.log("Type in distancePage " + type)
     console.log(uid)
 
     useEffect(() => {
@@ -36,7 +37,7 @@ export default function DistancePage() {
 
         Firestore.storage_retrieveProfilePic(setDisplayPicture, () => setDisplayPicture({ uri: "" }));
 
-        
+
         Firestore.db_getUserDataSnapshot(
             (userData) => {
                 setTotalDistance(userData.totalDistance)
@@ -45,8 +46,8 @@ export default function DistancePage() {
             },
             (error) => { console.log(error) },
         )
-        
-     
+
+
 
     }, [])
 
@@ -60,7 +61,7 @@ export default function DistancePage() {
                 (error) => { console.log('history view fail') }
             )
         }
-    },[uid])
+    }, [uid])
 
     useEffect(() => {
         var uidList = [];
@@ -81,18 +82,28 @@ export default function DistancePage() {
     }, [friendList])
 
     useEffect(() => {
-        console.log("Friend Data" + friendData.length);
+        console.log("What type in useEffect "+ type);
+        console.log("Friend Data length " + friendData.length);
         if (friendData.length != 0) {
-            console.log("friendData is empty");
-            console.log("friendData = " + friendData.sort((a, b) => (a.longestDistance < b.longestDistance) ? 1 : -1));
-            for (var i = 0; i < friendData.length; i++) {
-                console.log("friend_displayName = " + friendData[i].displayName);
-                console.log("friend_longestDistance = " + friendData[i].longestDistance);
+            if (type == 1) {
+                console.log("friendData = " + friendData.sort((a, b) => (a.longestDistance < b.longestDistance) ? 1 : -1));
+                for (var i = 0; i < friendData.length; i++) {
+                    console.log("friend_displayName = " + friendData[i].displayName);
+                    console.log("friend_longestDistance = " + friendData[i].longestDistance);
+                }
+            } else if (type == 2) {
+                console.log("friendData = " + friendData.sort((a, b) => (a.fastestPace > b.fastestPace) ? 1 : -1));
+                for (var i = 0; i < friendData.length; i++) {
+                    console.log("friend_displayName = " + friendData[i].displayName);
+                    console.log("friend_fastestPace = " + friendData[i].fastestPace);
+                }
+            } else {
+                console.log("Nothing to display");
             }
         }
-        console.log(friendData);
+            console.log(friendData);
 
-    }, [friendData])
+        }, [friendData, type])
 
     useEffect(() => {
         if (pressuid != "")
@@ -104,14 +115,14 @@ export default function DistancePage() {
                 (error) => { console.log('history view fail') }
             )
         }
-    },[pressuid])
+    },[pressuid, type])
     
 
     return (
         <View style={styles.container}>
             <View style={styles.friendlist}>
                 <View style={styles.myProfile}>
-                    <TouchableOpacity style={styles.profilePicContainer} onPress={() => {setPressuid(uid)}}>
+                    <TouchableOpacity style={styles.profilePicContainer} onPress={() => { setPressuid(uid) }}>
                         {(displayPicture.uri != "") &&
                             <Image style={styles.profilePicContainer} source={displayPicture} />
                         }
@@ -122,11 +133,12 @@ export default function DistancePage() {
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         style={styles.list2}
-                        data={friendList}
+                        data={friendData}
+                        extraData={friendData}
                         keyExtractor={item => item.uid}
                         renderItem={({ item }) => <DistanceItem item={item}
-                        pressuid = {pressuid}
-                        setPressuid = {(uid)=>{setPressuid(uid)}}
+                            pressuid={pressuid}
+                            setPressuid={(uid) => { setPressuid(uid) }}
                         />}
                         ListEmptyComponent={
                             <View style={styles.emptyList}>

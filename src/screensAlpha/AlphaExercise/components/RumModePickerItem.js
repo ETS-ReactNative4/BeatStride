@@ -22,9 +22,7 @@ const {width, height} = Dimensions.get("window")
 
     console.log("IN PICKER "+itemList)
 
-    useEffect(() => {
-        console.log("RunModePicker "+itemIdx+" "+itemList[itemIdx].name)
-    }, [itemIdx])
+
 
     const arraylooper=()=>{
         if (itemIdx<itemList.length-1){
@@ -146,6 +144,7 @@ const styles = StyleSheet.create({
         transform: [{translateY: width * 0.01}],
         tintColor: '#7289D9',
     },
+    
 })
 
 export default RunModePickerItem;
