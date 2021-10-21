@@ -268,7 +268,7 @@ const RunTab = (props) => {
                 <View style={styles.startButton}>
                     <TouchableOpacity onPress={() => {
                         setStatus(6),
-                        navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                        navigation.navigate("AlphaSpaceRace", {mode: "Space"})
                     }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>

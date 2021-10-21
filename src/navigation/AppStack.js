@@ -30,6 +30,8 @@ import AlphaEditMeScreen from '../screensAlpha/AlphaMe/AlphaEditMeScreen';
 // Omkar
 import RunScreenAlpha from '../screensAlpha/AlphaExercise/RunScreenAlpha';
 import AlphaEndScreen from '../screensAlpha/AlphaExercise/AlphaEndScreen';
+import AlphaSpaceRace from '../screensAlpha/AlphaExercise/AlphaSpaceRace';
+import AlphaTimeRace from '../screensAlpha/AlphaExercise/AlphaTimeRace';
 //WeiJian
 import AlphaUserProfileScreen from '../screensAlpha/AlphaSocials/UserProfileScreen';
 
@@ -223,6 +225,18 @@ const AppStack = () => {
                 key="AlphaEndScreen"
                 name="AlphaEndScreen"
                 component={AlphaEndScreen}
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                key="AlphaSpaceRace"
+                name="AlphaSpaceRace"
+                component={AlphaSpaceRace}
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                key="AlphaTimeRace"
+                name="AlphaTimeRace"
+                component={AlphaTimeRace}
                 options={{headerShown: false}}
             />
             {/* Added by WeiJian */}
