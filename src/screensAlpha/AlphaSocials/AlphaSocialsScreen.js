@@ -16,8 +16,6 @@ export default function App() {
   return(
     <Stack.Navigator>
       <Stack.Screen name="Distance" component={DistanceScreen} options={{ headerShown: false }}/>
-      <Stack.Screen name="Speed" component={SpeedScreen} options={{ headerShown: false }}/>
-      <Stack.Screen name="Activity" component={ActivityScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Friend Requests" component={FriendReqScreen} options={{headerStyle: {backgroundColor: '#1E2124',height: height * 0.1,},headerTintColor: '#BABBBF',headerTitleStyle: {fontWeight: 'bold',}}} />
       <Stack.Screen name="Search Users" component={UserSearchScreen} options={{headerStyle: {backgroundColor: '#1E2124',height: height * 0.1,},headerTintColor: '#BABBBF',headerTitleStyle: {fontWeight: 'bold',}}}/>
       <Stack.Screen name="Friend List" component={FriendScreen} options={{headerStyle: {backgroundColor: '#1E2124',height: height * 0.1,},headerTintColor: '#BABBBF',headerTitleStyle: {fontWeight: 'bold',}}}/>
@@ -27,7 +25,7 @@ export default function App() {
 
 function DistanceScreen({ navigation }) {
   const [empty, setEmpty] = useState(true);
-  const [type, setType] = useState();
+  const [type, setType] = useState(1);
 
   useEffect(() => {
     Firestore.db_requestList(
@@ -69,13 +67,13 @@ function DistanceScreen({ navigation }) {
                 </View>
             </View>
       <View style={styles.buttonbody}> 
-          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => {setType(1)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==1? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(1)}}>
             <Text style={styles.buttonText}>Distance</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(2)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==2? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(2)}}>
             <Text style={styles.buttonText}>Speed</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(3)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==3? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(3)}}>
             <Text style={styles.buttonText}>Activity</Text>
           </TouchableOpacity> 
       </View>
@@ -87,127 +85,6 @@ function DistanceScreen({ navigation }) {
   );
 }
 
-function SpeedScreen({ navigation }) {
-  const [empty, setEmpty] = useState(true);
-
-  useEffect(() => {
-    Firestore.db_requestList(
-        (userList) => {
-            if (userList.length == 0) {
-                setEmpty(true);
-            } else {
-                setEmpty(false);
-            }  
-        },
-        (error) => {console.log(error)},
-    )
-}, [])
-  return(
-    <View style={styles.container}>
-    <View style={styles.header}>
-              <Text style={styles.headerText}>Social</Text>
-
-              <View style={styles.iconComponent}>
-                
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Friend List')}>
-                  <View>
-                  <Icon name="person" size={width * 0.1} color= '#BABBBF'/>
-                  </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Friend Requests')}>
-                  <View>
-                  <Icon name="person-add" size={width * 0.1} color= '#BABBBF'/>
-                  <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red"}}/>
-                  </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Search Users')}>
-                  <View >
-                  <Icon name="search" size={width * 0.1} color= '#BABBBF'/>
-                  </View>
-                  </TouchableOpacity>
-              </View>
-          </View>
-      <View style={styles.buttonbody}> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Distance')}>
-            <Text style={styles.buttonText}>Distance</Text>
-          </TouchableOpacity> 
-          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => navigation.navigate('Speed')}>
-            <Text style={styles.buttonText}>Speed</Text>
-          </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Activity')}>
-            <Text style={styles.buttonText}>Activity</Text>
-          </TouchableOpacity> 
-      </View>
-      <View style={styles.content}>
-        <Text>Speed content goes here / Calling the page</Text>
-      </View>
-    </View>
-    
-  );
-}
-
-function ActivityScreen({ navigation }) {
-  const [empty, setEmpty] = useState(true);
-
-  useEffect(() => {
-    Firestore.db_requestList(
-        (userList) => {
-            if (userList.length == 0) {
-                setEmpty(true);
-            } else {
-                setEmpty(false);
-            }  
-        },
-        (error) => {console.log(error)},
-    )
-}, [])
-  return(
-    <View style={styles.container}>
-    <View style={styles.header}>
-              <Text style={styles.headerText}>Social</Text>
-
-              <View style={styles.iconComponent}>
-
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Friend List')}>
-                  <View>
-                  <Icon name="person" size={width * 0.1} color= '#BABBBF'/>
-                  </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Friend Requests')}>
-                  <View>
-                  <Icon name="person-add" size={width * 0.1} color= '#BABBBF'/>
-                  <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red"}}/>
-                  </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => navigation.navigate('Search Users')}>
-                  <View >
-                  <Icon name="search" size={width * 0.1} color= '#BABBBF'/>
-                  </View>
-                  </TouchableOpacity>
-              </View>
-          </View>
-      <View style={styles.buttonbody}> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Distance')}>
-            <Text style={styles.buttonText}>Distance</Text>
-          </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => navigation.navigate('Speed')}>
-            <Text style={styles.buttonText}>Speed</Text>
-          </TouchableOpacity> 
-          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => navigation.navigate('Activity')}>
-            <Text style={styles.buttonText}>Activity</Text>
-          </TouchableOpacity> 
-      </View>
-      <View style={styles.content}>
-        <Text>Activity content goes here / Calling the page</Text>
-      </View>
-    </View>
-    
-  );
-}
 function FriendReqScreen({ navigation }) {
   return(
     <FriendReqPage/>
@@ -271,7 +148,7 @@ iconContainer:{
     height: 40,
     alignItems: 'center',
     paddingTop: 10,
-    backgroundColor: '#393C41',
+    //backgroundColor: '#393C41',
     marginLeft:10,
   },
   buttonActive:{
@@ -279,7 +156,7 @@ iconContainer:{
     height: 40,
     alignItems: 'center',
     paddingTop: 10,
-    backgroundColor: '#555a61',
+    //backgroundColor: '#555a61',
     marginLeft:10,
   },
   content:{
