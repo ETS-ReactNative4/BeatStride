@@ -97,7 +97,14 @@ export default function DistancePage({ type }) {
                     console.log("friend_displayName = " + friendData[i].displayName);
                     console.log("friend_fastestPace = " + friendData[i].fastestPace);
                 }
-            } else {
+            }  else if (type == 3) {
+                console.log("friendData = " + friendData.sort((a, b) => (a.runCount < b.runCount) ? 1 : -1));
+                for (var i = 0; i < friendData.length; i++) {
+                    console.log("friend_displayName = " + friendData[i].displayName);
+                    console.log("friend_runCount = " + friendData[i].runCount);
+                }
+            }
+            else {
                 console.log("Nothing to display");
             }
         }
