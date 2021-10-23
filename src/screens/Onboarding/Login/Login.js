@@ -1,5 +1,5 @@
 import React, {useContext, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Pressable, SafeAreaView, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { StyleSheet, Text, View, Pressable, SafeAreaView, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
 import { Button, TextInput, IconButton } from 'react-native-paper';
 import { useNavigation, CommonActions} from '@react-navigation/native';
 
@@ -60,7 +60,7 @@ function WelcomeScreen(props) {
               [ { text:"Understood", onPress: () => {} } ]
             )
         };
-        return console.error(error);
+        // return console.error(error);
       }
     );
   }
