@@ -49,9 +49,80 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
     const [empty,setEmpty]=useState(true)
 
-    const[allowBack,setAllowBack]=useState(false)
-    const [deleteAll,setDeleteAll]=useState(false)
+    //const[allowBack,setAllowBack]=useState(false)
     const [startRun,setstartRun]=useState(false)
+
+    const[allowBackState,setAllowBackState]=useState(0);
+
+
+    useEffect(() => {
+
+        if(allowBackState===0){
+            console.log("no back")
+        }
+        if(allowBackState===1){
+            console.log("back pressed")
+            Alert.alert(
+                "Cancel Race",
+                "Are you sure you want to cancelled race for everyone.",
+                [ { text:"Cancel", onPress: () => {} }, 
+                { text:"Confirm", onPress: () => {
+                    delineAllInvite();
+                    setAllowBackState(2);
+                
+                } }]
+            )
+        }
+        if(allowBackState===2){
+            console.log("Confirm Back")
+            navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
+        }
+        if(allowBackState===3){
+            console.log("Start Race")
+            startRunFunction();
+            
+        }
+        if(allowBackState===4){
+            console.log("gameStarted")
+            navigation.navigate("AlphaTimeRace", {mode: "Time"})
+            
+        }
+        if(allowBackState===5){
+            // console.log("user Pressed Decline")
+            // Alert.alert(
+            //     "Decline Race",
+            //     "Are you sure you want to decline? You won't be able to return unless the owner reinvites you",
+            //     [ { text:"Cancel", onPress: () => {
+            //         setAllowBackState(0);
+            //     } }, 
+            //     { text:"Confirm", onPress: () => {
+            //         declineInvite()
+            //         setAllowBackState(2);
+            //     } }]
+            // )
+            
+        }
+    }, [allowBackState])
+
+    // For auto moving the run start
+    //const [gameStatus, setGameStatus] = useState("request");
+
+    // useEffect(() => {
+    //     console.log(gameStatus)
+    //     // console.log(gameStatus==="accept")
+    //     // if(gameStatus==="accept"){
+    //     //     console.log('STARTTTTTTTTTTTTTT NOW GAMEEEEEEE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    //     // }
+    //     // return () => {
+    //     //     console.log("game Status Unmounted") // This worked for me
+    //     //   };
+    //     return()=>{
+    //         setGameStatus("request");
+    //     }
+    // }, [gameStatus])
+
+
+
     /**
      * This helper method is a comparator to compare the keyword in the search bar to the displayName field in the userData.
      * @param {Object} userData     A object which contains the user information retrieved from Firestore.
@@ -143,6 +214,22 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                 
             },
             (error) => {console.log(error)},
+        )
+        
+        //Added for Organiser to detect chages in room settings
+        Firestore.db_gameRoomSettingsonSnapShot(
+            "game"+selfID
+            ,(settings) => {
+                if(settings.length!=0){
+                    if( settings[0].status=="start"){
+                        setAllowBackState(4)
+                        // navigation.navigate("AlphaTimeRace", {mode: "Time"})
+                        // console.log('STARTTTTTTTTT STATUSSSSSSSSSS#############################################################################################################################################################################');
+                        // setGameStatus("accept");
+                    }
+                }
+            },
+            (error) => {console.log(error)},
         ) 
     }, [selfID])
 
@@ -222,20 +309,9 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
     useEffect(() => {
         const back = navigation.addListener('beforeRemove', (e) => {
-            if (!allowBack) {
+            if (allowBackState===0) {
                 e.preventDefault();
-                Alert.alert(
-                    "Cancel Race",
-                    "Are you sure you want to leave the race? The event will be cancelled for everyone.",
-                    [ { text:"Cancel", onPress: () => {} }, 
-                    { text:"Confirm", onPress: () => {
-                        delineAllInvite();
-                        navigation.dispatch(e.data.action);
-                    
-                    } }]
-                )
-            }else if(allowBack){
-                navigation.dispatch(e.data.action);
+                setAllowBackState(1);
             }
         },);
         return back;
@@ -260,9 +336,9 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
     }
 
     useEffect(() => {
-        if(friendListFireStore.length==0 && deleteAll==true){
+        if(friendListFireStore.length==0){
             Firestore.db_deleteGameSettings ('game'+selfID);
-            setDeleteAll(false);
+            // setAllowBack(false);
         }
 
     }, [friendListFireStore])

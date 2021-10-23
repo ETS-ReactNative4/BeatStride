@@ -18,7 +18,7 @@ import AlphaRunCountdown from './AlphaRunCountdown';
 import HoldableButton from './components/CircularProgressBar/HoldableButton';
 
 //Added by Barnabas
-import AlphaRunMapTimeRace from './AlphaRunMapTimeRace';
+import AlphaRunMapTimeRace2 from './AlphaRunMapTimeRace2';
 //End by Barnabas
 
 const {width, height} = Dimensions.get("window")
@@ -28,7 +28,7 @@ const AlphaTimeRace = ({navigation, route}) => {
     const [scrollToPage, setScrollToPage]=useState(0);
     /* SCROLL ANIMATIONS */
     const [scrollRef , setScrollRef] = useState(null)
-    
+
     useEffect(() => {
 
         setScrollToPage(1)
@@ -481,7 +481,7 @@ const AlphaTimeRace = ({navigation, route}) => {
             <View style={styles.mapContainer}>
 
                 <View style={styles.componentContainer}>
-                    <AlphaRunMapTimeRace
+                    <AlphaRunMapTimeRace2
                             runStatus={runStatus}
                             mapPositions={mapPositions} 
                             currCoord={currCoord}
