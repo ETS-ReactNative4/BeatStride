@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity,Animated } from 'react-native';
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import {  Dimensions, Image} from 'react-native';
 import { CommonActions } from '@react-navigation/native'; 
 import * as Location from 'expo-location';
@@ -17,10 +17,23 @@ import AlphaRunTimer from './components/AlphaRunTimer';
 import AlphaRunCountdown from './AlphaRunCountdown';
 import HoldableButton from './components/CircularProgressBar/HoldableButton';
 
+//Added by Barnabas
+import AlphaRunMapTimeRace from './AlphaRunMapTimeRace';
+//End by Barnabas
+
 const {width, height} = Dimensions.get("window")
 
 const AlphaTimeRace = ({navigation, route}) => {
+    //Added by Barnabas
+    const [scrollToPage, setScrollToPage]=useState(0);
+    /* SCROLL ANIMATIONS */
+    const [scrollRef , setScrollRef] = useState(null)
+    
+    useEffect(() => {
 
+        setScrollToPage(1)
+    }, [])
+    //End by Barnabas
 
     /* [Page Navigation Render] */
     /**
@@ -407,148 +420,228 @@ const AlphaTimeRace = ({navigation, route}) => {
       }
   },[runStatus])
 
+    //Added by Barnabas
+
+
+
+    
+
+    useEffect(() => {
+        console.log("Here RICKY RICK")
+        console.log(scrollToPage)
+        if(scrollRef!=null){
+          scrollHandler(scrollToPage)  
+        }
+        
+    }, [scrollToPage])
+    /**
+     * This is a method to trigger the scroll effect on the "Run Tab" scrollview.
+     * @param {Number} num A number value to be multiplied with width value.
+     */
+    const scrollHandler = (num) => {
+        scrollRef.scrollTo({
+            x: width * num,
+            animated: true
+    })};
+  
+    const scrollX = useRef(new Animated.Value(0)).current;
+  
+    const RunIndicator = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#282B30', '#424549'],
+    });
+    const WorkoutIndicator = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#424549', '#282B30'],
+    });
+    const RunHighlight = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#FFFFFF', '#424549'],
+    });
+    const WorkoutHighlight = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#424549', '#FFFFFF'],
+    });
+    //End By Barnabas
+
     return (
-        <View style={{backgroundColor: '#282B30',flex: 1}}>
-            <View style={screenStyle.screen}>
-                <View style = {{height: height*0.05, width: width}}>
-                    <Text style={{textAlign:'center',color:'green', fontSize:25}}>
-                        ACTIVE RACE
-                    </Text>
-                </View>
-                <View>
-                    <Text style={textStyle.timeDisplay}>
-                        <AlphaRunTimer
-                        runStatus={runStatus}
-                        setDuration={setDuration}
-                        distance={distance}
-                        km={km}
-                        setKm={setKm}
+        <Animated.ScrollView
+                style={{...styles.scrollview,flexDirection:'row'}}
+                ref={ref => setScrollRef(ref)}
+                horizontal
+                snapToInterval={width}
+                decelerationRate="fast"
+                showsHorizontalScrollIndicator={false}
+                bounces={false}
+                overScrollMode="never"
+                disableIntervalMomentum={true}
+                onScroll={Animated.event( [{nativeEvent: {contentOffset: {x: scrollX}}}], {useNativeDriver: false} )}
+            >
+                   {/* Map */}
+            <View style={styles.mapContainer}>
+
+                <View style={styles.componentContainer}>
+                    <AlphaRunMapTimeRace
+                            runStatus={runStatus}
+                            mapPositions={mapPositions} 
+                            currCoord={currCoord}
                         />
-                    </Text>
                 </View>
-                <Separator />
-                <View>
-                    <Text style={textStyle.coloredRed}>
-                        TIME
-                    </Text>
-                </View>
-                <Text style={textStyle.distanceDisplay}>
-                    <AlphaRunDistance
-                        distance={distance}
-                    />
-                </Text>
-                <Separator />
-                <View>
-                    <Text style={textStyle.coloredRed}>
-                        KILOMETERS
-                    </Text>
-                </View>
-                <View style = {speedLayout.ridesFriends}>
-                    <View style={{width:0.5*width, height:0.15*height - 4}}>
-                        <Text style={speedLayout.numbers}>
-                            {duration}
-                        </Text>
-                        <Text style={speedLayout.coloredRedspeed}>
-                            CURRENT SPEED
-                        </Text>
-                    </View>
-                    <View style = {speedLayout.verticleLine}></View>
-                    <View style={{width:0.5*width, height:0.15*height-4}}>
-                        <Text style={speedLayout.numbers}>
-                            {steps}
-                        </Text>
-                        <Text style={speedLayout.coloredRedspeed}>
-                            STEPS
-                        </Text>
-                    </View>
-                </View>
-                <Separator />
-                <View style = {speedLayout.ridesFriendsBottom}>
-                    <View style = {{justifyContent: 'space-evenly', height: 0.25*height, width:0.3*width, alignItems:'center'}}>
-                            {(runStatus === 2 || (runStatus === 8 && !paused) || (runStatus === 9 && !paused)) ?  <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(3)}>
-                                <Image 
-                                    source={require('../../assets/icons/ExercisePause.png')}
-                                    resizeMode= 'contain'
-                                    style={newstyles.buttonIcon}
-                                />
-                            </TouchableOpacity> : <></>}
-                            {(runStatus === 3 || (runStatus === 8 && paused) || (runStatus === 9 && paused)) ? <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(7)}>
-                                <Image 
-                                    source={require('../../assets/icons/ExercisePlay.png')}
-                                    resizeMode= 'contain'
-                                    style={newstyles.startIcon}
-                                />
-                            </TouchableOpacity> : <></>}
-                            {(runStatus === 3 || (runStatus === 8 && paused) || (runStatus === 9 && paused)) ? 
-                            ( 
-                                <HoldableButton 
-                                    radius={0.05 * height}
-                                    onSuccess={() => setRunStatus(5)}
-                                    imageSource={require('../../assets/icons/ExerciseStop.png')}
-                                />
-                            ) : <></>}
-                    </View>
-                    <View style = {speedLayout.verticleLine}></View>
-                    <View style={{height:0.3*height, width:width*0.5, alignItems:'center', flexDirection: 'column'}}>
-                        <View style={{height:0.1*height -4}}>
-                            <Text style={{fontSize: 50, color:'orange', textAlign:'center'}}>
-                                5{"\n"}
-                            </Text>
-                            <Text style={speedLayout.coloredRedspeed}>
-                                POSITION
-                            </Text>
-                        </View>
-                        <View style = {{marginVertical: 0.01*height,
-                                        borderBottomColor: 'white',
-                                        borderBottomWidth: 10, //StyleSheet.hairlineWidth,
-                                        marginHorizontal: 0,
-                                        height:0.03*height}}/>
-                        <View>
-                        <View style={{flexDirection: 'row'}}>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.roundButton3}>
-                                <Text>1</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.SubmitButtonStyle}>
-                                <Text style={{textAlign:'center'}}>Position 1</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.roundButton3}>
-                                <Text>1</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.SubmitButtonStyle}>
-                                <Text style={{textAlign:'center'}}>Position 2</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.roundButton3}>
-                                <Text>1</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                style={buttonslayout.SubmitButtonStyle}>
-                                <Text style={{textAlign:'center'}}>Position 3</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    </View>
+                <View style={{
+                    ...styles.componentContainer, position: 'absolute',
+                    height:height,
+                    width:width,
+                    top: 0,
+                    right: 0,
+                    resizeMode: 'contain',
+                    backgroundColor: 'transparent'
+                }}>
                 </View>
             </View>
-            <AlphaRunCountdown
-                countdown={countdown}
-                countdownMsg={countdownMsg}
-            />
-        </View>
+            
+            
+            <View style={{backgroundColor: '#282B30',width:width, height:height,backgroundColor: 'pink'}}>
+                <View style={screenStyle.screen}>
+                    <View style = {{height: height*0.05, width: width}}>
+                        <Text style={{textAlign:'center',color:'green', fontSize:25}}>
+                            ACTIVE RACE
+                        </Text>
+                    </View>
+                    <View>
+                        <Text style={textStyle.timeDisplay}>
+                            <AlphaRunTimer
+                            runStatus={runStatus}
+                            setDuration={setDuration}
+                            distance={distance}
+                            km={km}
+                            setKm={setKm}
+                            />
+                        </Text>
+                    </View>
+                    <Separator />
+                    <View>
+                        <Text style={textStyle.coloredRed}>
+                            TIME
+                        </Text>
+                    </View>
+                    <Text style={textStyle.distanceDisplay}>
+                        <AlphaRunDistance
+                            distance={distance}
+                        />
+                    </Text>
+                    <Separator />
+                    <View>
+                        <Text style={textStyle.coloredRed}>
+                            KILOMETERS
+                        </Text>
+                    </View>
+                    <View style = {speedLayout.ridesFriends}>
+                        <View style={{width:0.5*width, height:0.15*height - 4}}>
+                            <Text style={speedLayout.numbers}>
+                                {duration}
+                            </Text>
+                            <Text style={speedLayout.coloredRedspeed}>
+                                CURRENT SPEED
+                            </Text>
+                        </View>
+                        <View style = {speedLayout.verticleLine}></View>
+                        <View style={{width:0.5*width, height:0.15*height-4}}>
+                            <Text style={speedLayout.numbers}>
+                                {steps}
+                            </Text>
+                            <Text style={speedLayout.coloredRedspeed}>
+                                STEPS
+                            </Text>
+                        </View>
+                    </View>
+                    <Separator />
+                    <View style = {speedLayout.ridesFriendsBottom}>
+                        <View style = {{justifyContent: 'space-evenly', height: 0.25*height, width:0.3*width, alignItems:'center'}}>
+                                {(runStatus === 2 || (runStatus === 8 && !paused) || (runStatus === 9 && !paused)) ?  <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(3)}>
+                                    <Image 
+                                        source={require('../../assets/icons/ExercisePause.png')}
+                                        resizeMode= 'contain'
+                                        style={newstyles.buttonIcon}
+                                    />
+                                </TouchableOpacity> : <></>}
+                                {(runStatus === 3 || (runStatus === 8 && paused) || (runStatus === 9 && paused)) ? <TouchableOpacity style={newstyles.button} onPress={() => setRunStatus(7)}>
+                                    <Image 
+                                        source={require('../../assets/icons/ExercisePlay.png')}
+                                        resizeMode= 'contain'
+                                        style={newstyles.startIcon}
+                                    />
+                                </TouchableOpacity> : <></>}
+                                {(runStatus === 3 || (runStatus === 8 && paused) || (runStatus === 9 && paused)) ? 
+                                ( 
+                                    <HoldableButton 
+                                        radius={0.05 * height}
+                                        onSuccess={() => setRunStatus(5)}
+                                        imageSource={require('../../assets/icons/ExerciseStop.png')}
+                                    />
+                                ) : <></>}
+                        </View>
+                        <View style = {speedLayout.verticleLine}></View>
+                        <View style={{height:0.3*height, width:width*0.5, alignItems:'center', flexDirection: 'column'}}>
+                            <View style={{height:0.1*height -4}}>
+                                <Text style={{fontSize: 50, color:'orange', textAlign:'center'}}>
+                                    5{"\n"}
+                                </Text>
+                                <Text style={speedLayout.coloredRedspeed}>
+                                    POSITION
+                                </Text>
+                            </View>
+                            <View style = {{marginVertical: 0.01*height,
+                                            borderBottomColor: 'white',
+                                            borderBottomWidth: 10, //StyleSheet.hairlineWidth,
+                                            marginHorizontal: 0,
+                                            height:0.03*height}}/>
+                            <View>
+                            <View style={{flexDirection: 'row'}}>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.roundButton3}>
+                                    <Text>1</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.SubmitButtonStyle}>
+                                    <Text style={{textAlign:'center'}}>Position 1</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{flexDirection: 'row'}}>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.roundButton3}>
+                                    <Text>1</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.SubmitButtonStyle}>
+                                    <Text style={{textAlign:'center'}}>Position 2</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{flexDirection: 'row'}}>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.roundButton3}>
+                                    <Text>1</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
+                                    style={buttonslayout.SubmitButtonStyle}>
+                                    <Text style={{textAlign:'center'}}>Position 3</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        </View>
+                    </View>
+                </View>
+                <AlphaRunCountdown
+                    countdown={countdown}
+                    countdownMsg={countdownMsg}
+                />
+            </View>
+        </Animated.ScrollView>
     );
 };
 
@@ -735,6 +828,43 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginHorizontal: 0.05*height
   },
+  //Added by Barnabas
+  mapContainer:{
+    width: width,
+    height: height,
+    //position: 'absolute',
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'yellow',
+    },
+
+    scrollview:{
+        // backgroundColor: 'green',
+        height: height * 0.73,
+    },
+
+    contentContainer:{
+        width: width,
+        height: height * 0.73,
+        backgroundColor: '#282B30',
+        //backgroundColor: 'yellow',
+        elevation:5,
+        shadowOffset: {
+            width: 20,
+            height: -20
+          },
+        shadowOpacity:0.9,
+        shadowRadius:10,
+        shadowColor:'black'
+        
+    }, 
+    componentContainer:{
+        width: width,
+        height: height * 1,
+        backgroundColor: '#282B30',
+    },  
+    //End Added by Barnabas
 });
 
 export default AlphaTimeRace;

@@ -51,6 +51,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
     const[allowBack,setAllowBack]=useState(false)
     const [deleteAll,setDeleteAll]=useState(false)
+    const [startRun,setstartRun]=useState(false)
     /**
      * This helper method is a comparator to compare the keyword in the search bar to the displayName field in the userData.
      * @param {Object} userData     A object which contains the user information retrieved from Firestore.
@@ -228,19 +229,24 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                     "Are you sure you want to leave the race? The event will be cancelled for everyone.",
                     [ { text:"Cancel", onPress: () => {} }, 
                     { text:"Confirm", onPress: () => {
-                        delineAllInvite()} }]
+                        delineAllInvite();
+                        navigation.dispatch(e.data.action);
+                    
+                    } }]
                 )
+            }else if(allowBack){
+                navigation.dispatch(e.data.action);
             }
-        });
+        },);
         return back;
-    } )
+    }  )
 
-    useEffect(() => {
-        if(allowBack){
-            navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
-            setAllowBack(false)
-        }
-    }, [allowBack])
+    // useEffect(() => {
+    //     if(allowBack){
+    //         navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
+    //         //setAllowBack(false)
+    //     }
+    // }, [allowBack])
 
 
     const delineAllInvite=()=>{
@@ -249,7 +255,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
             Firestore.db_deleteFriendFromGame( friendListFireStore[i].uid);
         }
         
-        setAllowBack(true);
+        //setAllowBack(true);
        
     }
 
@@ -260,6 +266,31 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
         }
 
     }, [friendListFireStore])
+
+
+    const startRunFunction=()=>{
+        //Firestore.db_requestSelftoStartGame( selfID ,raceParam, distance, overallTimeString)
+        setAddedFriendList(friendListFireStore)
+        setstartRun(true)
+
+    }
+
+    useEffect(() => {
+        if(startRun){
+            for (var i=0;i<addedFriendList.length;i++) {
+                if(addedFriendList[i].status=='accept'){
+                    //Request Everyone Else to Start Game
+                    Firestore.db_requestFriendtoStartGame( addedFriendList[i].uid ,raceParam, distance, overallTimeString)
+                }else{
+                    //Delete all other users
+                    Firestore.db_deleteFriendFromGame( addedFriendList[i].uid);
+                }
+                
+            }
+            setstartRun(false)
+        }
+        
+    }, [addedFriendList,startRun])
     return (
         <SafeAreaView style={styles.screen}>
             <View style={{height:0.12*height, flexDirection:'row', justifyContent:'space-between'}}>
@@ -411,6 +442,8 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                 <TouchableOpacity onPress={() => {
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
                         //navigation.navigate("LobbyOrganiserScreen2",{mode: "Time", chooseState:true})
+                        //Step 1: Convert all accept participant --> start. delete all other paticipants
+                        startRunFunction();
                     }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                 </TouchableOpacity>

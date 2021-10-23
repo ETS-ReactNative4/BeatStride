@@ -387,7 +387,7 @@ const RunTab = (props) => {
                         setStatus(6);
                         console.log("STARTEDDDDD "+ typeList[typeListIdx].name)
                         if (typeList[typeListIdx].name=='SPACE'){
-                            navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                            navigation.navigate("AlphaSpaceRace", {mode: "Space"})
                         }else if(typeList[typeListIdx].name=='TIME'){
                             navigation.navigate("LobbyOrganiserScreen",{mode: "Time", chooseState:true})
                         }
