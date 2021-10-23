@@ -69,31 +69,58 @@ const AlphaExerciseScreen = () => {
         //console.log("Check coord USEEFFECT" + currCoord.longitude+ " "+currCoord.latitude);
       }, [currCoord])
 
-      useEffect(() => {
+    //   useEffect(() => {
+    //     // !(parkList[0].hasOwnProperty('distance'))
+        
+    //    var [polygon,name] =isCoordinParkListPolygon(parkList)
+    //    if(polygon!=[]){
+    //        setPolygonUserIsIn(polygon)
+    //         setPolygonUserIsInName(name)
+    //    }
+        
+    //     //console.log('polygon: ' + polygonUserIsIn);
+    //   }, [parkList])
+
+    // const isCoordinParkListPolygon = (parkList) => {
+    //     if(parkList.length!=0){
+    //         for (var i = 0; i < parkList.length; i++) {
+    //             if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, parkList[i].polygon)){
+    //                 return [parkList[i].polygon,parkList[i].name]
+    //             }
+    //         }
+    //     }
+        
+
+    //     // check if current coordinate is in the polygon
+    //     // works! 
+    //     //console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
+        
+    //     return [[],""]
+    // } 
+
+    useEffect(() => {
         // !(parkList[0].hasOwnProperty('distance'))
         
-       var [polyon,name] =isCoordinParkListPolygon(parkList)
-        setPolygonUserIsIn(polyon)
-        setPolygonUserIsInName(name)
-        //console.log('polygon: ' + polygonUserIsIn);
-      }, [parkList])
-
-    const isCoordinParkListPolygon = (parkList) => {
-        if(parkList.length!=0){
-            for (var i = 0; i < parkList.length; i++) {
-                if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, parkList[i].polygon)){
-                    return [parkList[i].polygon,parkList[i].name]
-                }
-            }
+        console.log("parkList: "+parkList.length);
+        console.log(parkList);
+        for(var i = 0; i < parkList.length; i++) {
+            var obj = parkList[i];
+            console.log(obj.name+" "+parkList[i]["polygon"]);
+            isCoordinParkListPolygon(parkList[i].polygon, parkList[i].name);
         }
-        
+         
+        //console.log('polygon: ' + polygonUserIsIn);
+    }, [parkList])
 
-        // check if current coordinate is in the polygon
-        // works! 
-        //console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
-        
-        return [[],""]
-    } 
+    const isCoordinParkListPolygon = (polygon, name) => { 
+        console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
+        if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon)){
+            // if through setPolygonUserIsIn(polygon)
+            setPolygonUserIsIn(polygon);
+            setPolygonUserIsInName(name);
+        }
+    }
+
 
     const handleParkSearch = () => {
         if(subscribeParkLocations){

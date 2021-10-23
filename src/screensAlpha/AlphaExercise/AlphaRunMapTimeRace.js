@@ -71,7 +71,7 @@ const AlphaRunMapTimeRace = (props) => {
                 >
 
                 {
-                    ((item.hasOwnProperty(polygonUserIsIn) && (item.mode=="Space"))?(
+                    ((item.polygonUserIsIn!=null && (item.mode=="Space"))?(
 
                         <Polygon
                         coordinates={item.polygonUserIsIn,[...item.polygonUserIsIn]}
@@ -88,7 +88,7 @@ const AlphaRunMapTimeRace = (props) => {
                     <></>)
                 }
                 {
-                    ((item.hasOwnProperty(polygonUserIsIn) && (item.mode=="Space"))?(
+                    ((item.polygonUserIsIn!=null && (item.mode=="Space"))?(
 
                         <Polygon
                         coordinates={[
