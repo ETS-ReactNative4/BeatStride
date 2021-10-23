@@ -334,10 +334,9 @@ const RunTab = (props) => {
             translation.value=withTiming(0,{
                 duration:400
             });
-        }
-        if(typeList[typeListIdx].name==='SPACE'){
-            setPolygonUserIsIn([]);
-            setPolygonUserIsInName("");
+        }else if(typeList[typeListIdx].name==='SPACE'){
+            // setPolygonUserIsIn([]);
+            // setPolygonUserIsInName("");
 
         }
         

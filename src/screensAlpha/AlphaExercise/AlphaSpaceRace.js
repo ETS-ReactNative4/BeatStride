@@ -30,10 +30,7 @@ const AlphaSpaceRace = ({navigation, route}) => {
     /* SCROLL ANIMATIONS */
     const [scrollRef , setScrollRef] = useState(null)
 
-    useEffect(() => {
-
-        setScrollToPage(1)
-    }, [])
+    
     //End by Barnabas
 
     /* [Page Navigation Render] */
@@ -62,12 +59,7 @@ const AlphaSpaceRace = ({navigation, route}) => {
   const polygonUserIsIn = route.params.polygonUserIsIn;
   const polygonUserIsInName = route.params.polygonUserIsInName;
   const [valid,setValid] = useState(true);
-  const innerPolygonUserIsIn = [
-      {latitude: polygonUserIsIn[0].latitude - 0.0003, longitude: polygonUserIsIn[0].longitude - 0.0003},
-      {latitude: polygonUserIsIn[1].latitude + 0.0003, longitude: polygonUserIsIn[1].longitude - 0.0003},
-      {latitude: polygonUserIsIn[2].latitude + 0.0003, longitude: polygonUserIsIn[2].longitude + 0.0003},
-      {latitude: polygonUserIsIn[3].latitude - 0.0003, longitude: polygonUserIsIn[3].longitude + 0.0003}
-    ];
+  const [innerPolygonUserIsIn,setinnerPolygonUserIsIn] = useState([]);
 
   const [countdown, setCountdown] = useState(true);           //Countdown popup
   const [countdownMsg, setCountdownMsg] = useState("5");      //Countdown message
@@ -91,6 +83,19 @@ const AlphaSpaceRace = ({navigation, route}) => {
   const [timeStart, setTimeStart] = useState('')      //Start Time of Run
   const [day , setDay] = useState('')                 //Start Day of Run
   const [date, setDate] = useState('')                //Start Date of Run
+
+
+  useEffect(() => {
+
+    setScrollToPage(1)
+
+    setinnerPolygonUserIsIn([
+        {latitude: polygonUserIsIn[0].latitude - 0.0003, longitude: polygonUserIsIn[0].longitude - 0.0003},
+        {latitude: polygonUserIsIn[1].latitude + 0.0003, longitude: polygonUserIsIn[1].longitude - 0.0003},
+        {latitude: polygonUserIsIn[2].latitude + 0.0003, longitude: polygonUserIsIn[2].longitude + 0.0003},
+        {latitude: polygonUserIsIn[3].latitude - 0.0003, longitude: polygonUserIsIn[3].longitude + 0.0003}
+      ])
+}, [])
 
 
   /*              /
@@ -281,6 +286,8 @@ const AlphaSpaceRace = ({navigation, route}) => {
                 // TTS.setDefaultRate(0.5);
                 TTS.speak('Run compromised. Please return to the running area.');
           });
+      }else if(geolib.isPointInPolygon(currCoord, innerPolygonUserIsIn) ){
+        TTS.stop();
       }
   }
   
