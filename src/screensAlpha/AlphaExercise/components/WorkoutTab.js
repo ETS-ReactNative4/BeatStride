@@ -29,7 +29,7 @@ const WorkoutTab = (props) => {
 ])
 
     const parkList=props.parkList;
-    console.log("In Workout Tab"+parkList);
+    //console.log("In Workout Tab"+parkList);
 
     const scrollToPage=props.scrollToPage;
     const setScrollToPage=props.setScrollToPage;

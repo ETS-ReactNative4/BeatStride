@@ -38,7 +38,7 @@ const WorkoutParkItem = (props) => {
 
             setName(props.parkData.name)
             setParkSearchUrl(props.parkData.parkSearchUrl)
-            setDistance(props.parkData.distance)
+            setDistance(props.parkData.distance.toFixed(1))
     }
         return () => {
         }
@@ -70,7 +70,7 @@ const WorkoutParkItem = (props) => {
                         <Text style={{fontSize:(name.length>20)?11:15,color:'white',fontWeight: 'bold',textAlign: 'center', }}>{name}</Text>  
                     </View>
                     <View style={{height:height * 0.05 }}> 
-                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{distance.toFixed(1)+"m"}</Text>
+                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{distance+"m"}</Text>
                     </View>
                     
                 </View>

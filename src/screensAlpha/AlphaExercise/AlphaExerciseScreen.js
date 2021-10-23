@@ -65,35 +65,39 @@ const AlphaExerciseScreen = () => {
 
     useEffect(() => {
         handleParkSearch ();
-        console.log(parkList);
-        console.log("Check coord USEEFFECT" + currCoord.longitude+ " "+currCoord.latitude);
+        //console.log(parkList);
+        //console.log("Check coord USEEFFECT" + currCoord.longitude+ " "+currCoord.latitude);
       }, [currCoord])
 
       useEffect(() => {
         // !(parkList[0].hasOwnProperty('distance'))
-        console.log("parkList: "+parkList.length);
-        console.log(parkList);
-        for(var i = 0; i < parkList.length; i++) {
-            var obj = parkList[i];
-            console.log(obj.name+" "+parkList[i]["polygon"]);
-            isCoordinParkListPolygon(parkList[i].polygon, parkList[i].name);
-        }
+        
+       var [polyon,name] =isCoordinParkListPolygon(parkList)
+        setPolygonUserIsIn(polyon)
+        setPolygonUserIsInName(name)
         //console.log('polygon: ' + polygonUserIsIn);
       }, [parkList])
 
-    const isCoordinParkListPolygon = (polygon, name) => {
+    const isCoordinParkListPolygon = (parkList) => {
+        if(parkList.length!=0){
+            for (var i = 0; i < parkList.length; i++) {
+                if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, parkList[i].polygon)){
+                    return [parkList[i].polygon,parkList[i].name]
+                }
+            }
+        }
+        
+
         // check if current coordinate is in the polygon
         // works! 
-        console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
-        if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon)){
-            // if through setPolygonUserIsIn(polygon)
-            setPolygonUserIsIn(polygon);
-            setPolygonUserIsInName(name);
-        }
+        //console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
+        
+        return [[],""]
     } 
 
-    const handleParkSearch = async() => {
+    const handleParkSearch = () => {
         if(subscribeParkLocations){
+            console.log("Triggerred Resetting ParkList");
             const url  = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
             const location = `location=${currCoord.latitude},${currCoord.longitude}`;
             const radius = '&radius=3000';
@@ -112,35 +116,49 @@ const AlphaExerciseScreen = () => {
                 //Step 1: Calculate Distance and add distance as a new field to JSON File
                 for(var i = 0; i < result.results.length; i++) {
                     var obj = result.results[i];
-                    const distGain=distanceCalculate (obj.geometry.location, currCoord)
-                    //console.log(obj.name+" "+distGain);
-                    result.results[i]["distance"]=distGain;
-                    console.log(obj.name+" "+result.results[i]["distance"]);
-                    
-                    
+                    if(obj.hasOwnProperty('geometry')&&obj.geometry.hasOwnProperty('location')){
+                         const distGain=distanceCalculate (obj.geometry.location, currCoord)
+                        //console.log(obj.name+" "+distGain);
+                        result.results[i]["distance"]=distGain;
+                    }else{
+                        result.results[i]["distance"]=10000;
+                    }
+                    if(obj.hasOwnProperty('geometry')&&obj.geometry.hasOwnProperty('viewport')&&obj.geometry.viewport.hasOwnProperty('northeast') && obj.geometry.viewport.hasOwnProperty('southwest')){
+                        var NE={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.northeast.lng};
+                        var SE={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.northeast.lng};
+                        var SW={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.southwest.lng};
+                        var NW={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.southwest.lng};
+                        result.results[i]["polygon"]=[NE,SE,SW,NW];
+                    }else{
+                        result.results[i]["polygon"]=[
+                            {latitude:1.4506444, longitude:103.78277},
+                            {latitude:1.4417088, longitude:103.78277},
+                            {latitude:1.4417088, longitude:103.7777248},
+                            {latitude:1.4506444, longitude:103.7777248}];
+                    }
                     //console.log(" NorthEast "+obj.geometry.viewport.northeast.lat+" South West"+obj.geometry.viewport.southwest.lat);
-                    var NE={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.northeast.lng};
-                    var SE={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.northeast.lng};
-                    var SW={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.southwest.lng};
-                    var NW={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.southwest.lng};
-                    result.results[i]["polygon"]=[NE,SE,SW,NW];
-
-
-                    const photoref=result.results[i].photos[0].photo_reference;
-                    const photorefFieldPlaces = `&photo_reference=${photoref}`;
-                    result.results[i]["parkSearchUrl"]=urlPlaces + maxwidthPlaces + photorefFieldPlaces +  keyPlaces;
-
+                    
+                    //console.log(obj.name+"Heya "+result.results[i]["distance"]);
+                    if(obj.hasOwnProperty('photos')&&obj.photos[0].hasOwnProperty('photo_reference')){
+                        const photoref=obj.photos[0].photo_reference;
+                        const photorefFieldPlaces = `&photo_reference=${photoref}`;
+                        result.results[i]["parkSearchUrl"]=urlPlaces + maxwidthPlaces + photorefFieldPlaces +  keyPlaces;
+                    }else{
+                        result.results[i]["parkSearchUrl"]="https://static2.touristtube.com/media/thingstodo/Swiss-Path_1464076045.jpg?d=599x280";
+                    }
+                    
+                        //console.log(urlPlaces + maxwidthPlaces + photorefFieldPlaces +  keyPlaces);
+                    
                 }
                 //Step 2: Sort in assending Distance and only keep the first 4 results.
-                    
-                    result.results.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-                for(var i = 0; i < result.results.length; i++) {
-                    var obj = result.results[i];
-                    console.log(obj.name+" "+result.results[i]["distance"]);
-                }
+                result.results.sort((a, b) => {return parseFloat(a.distance) - parseFloat(b.distance)});
+                // for(var i = 0; i < 4; i++) {
+                //     var obj = result.results[i];
+                //     console.log(obj.name+"Heya "+result.results[i]["distance"]);
+                // }
                 return setParkList(result.results.slice(0,4));
             } 
-                );
+            );
         }
     }
 
@@ -349,7 +367,9 @@ const AlphaExerciseScreen = () => {
                     setSubscribeParkLocations={(item)=>setSubscribeParkLocations(item)}
                     
                     polygonUserIsIn={polygonUserIsIn}
+                    setPolygonUserIsIn={(poly)=>{setPolygonUserIsIn(poly)}}
                     polygonUserIsInName={polygonUserIsInName}
+                    setPolygonUserIsInName={(name)=>{setPolygonUserIsInName(name)}}
                     />
                 <WorkoutTab
                     currCoord={currCoord}
