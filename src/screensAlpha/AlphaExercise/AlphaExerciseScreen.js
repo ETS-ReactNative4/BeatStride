@@ -50,6 +50,15 @@ const AlphaExerciseScreen = () => {
     ])
     const[audioListIdx,setAudioListIdx]=useState(0);
 
+    const[subscribeParkLocations,setSubscribeParkLocations]=useState(true);
+
+
+    useEffect(() => {
+        setSubscribeParkLocations(true);
+        return () => {
+            setSubscribeParkLocations(false);
+        }
+    }, [])
 
 
     useEffect(() => {
@@ -70,42 +79,55 @@ const AlphaExerciseScreen = () => {
 
 
     const handleParkSearch = async() => {
-        const url  = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
-        const location = `location=${currCoord.latitude},${currCoord.longitude}`;
-        const radius = '&radius=3000';
-        const type = '&keyword=park';
-        const key = '&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ';
-        const parkSearchUrl = url + location + radius + type + key;
-        console.log(parkSearchUrl);
-        fetch(parkSearchUrl)
-        .then(response => response.json())
-        .then(result =>{
-            //console.log(result.results.length);
-            //Step 1: Calculate Distance and add distance as a new field to JSON File
-            for(var i = 0; i < result.results.length; i++) {
-                var obj = result.results[i];
-                const distGain=distanceCalculate (obj.geometry.location, currCoord)
-                //console.log(obj.name+" "+distGain);
-                result.results[i]["distance"]=distGain;
-                console.log(obj.name+" "+result.results[i]["distance"]);
-                
-                
-                //console.log(" NorthEast "+obj.geometry.viewport.northeast.lat+" South West"+obj.geometry.viewport.southwest.lat);
-                var NE={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.northeast.lng};
-                var SE={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.northeast.lng};
-                var SW={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.southwest.lng};
-                var NW={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.southwest.lng};
-                result.results[i]["polygon"]=[NE,SE,SW,NW];
-            }
-            //Step 2: Sort in assending Distance and only keep the first 4 results.
-            result.results.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-            for(var i = 0; i < result.results.length; i++) {
-                var obj = result.results[i];
-                console.log(obj.name+" "+result.results[i]["distance"]);
-            }
-            return setParkList(result.results.slice(0,4));
-        } 
-            );
+        if(subscribeParkLocations){
+            const url  = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
+            const location = `location=${currCoord.latitude},${currCoord.longitude}`;
+            const radius = '&radius=3000';
+            const type = '&keyword=park';
+            const key = '&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ';
+            const parkSearchUrl = url + location + radius + type + key;
+
+            const urlPlaces  = 'https://maps.googleapis.com/maps/api/place/photo?'
+            const maxwidthPlaces = `maxwidth=400`;
+            const keyPlaces = `&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ`;
+            console.log(parkSearchUrl);
+            fetch(parkSearchUrl)
+            .then(response => response.json())
+            .then(result =>{
+                //console.log(result.results.length);
+                //Step 1: Calculate Distance and add distance as a new field to JSON File
+                for(var i = 0; i < result.results.length; i++) {
+                    var obj = result.results[i];
+                    const distGain=distanceCalculate (obj.geometry.location, currCoord)
+                    //console.log(obj.name+" "+distGain);
+                    result.results[i]["distance"]=distGain;
+                    console.log(obj.name+" "+result.results[i]["distance"]);
+                    
+                    
+                    //console.log(" NorthEast "+obj.geometry.viewport.northeast.lat+" South West"+obj.geometry.viewport.southwest.lat);
+                    var NE={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.northeast.lng};
+                    var SE={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.northeast.lng};
+                    var SW={latitude:obj.geometry.viewport.southwest.lat, longitude:obj.geometry.viewport.southwest.lng};
+                    var NW={latitude:obj.geometry.viewport.northeast.lat, longitude:obj.geometry.viewport.southwest.lng};
+                    result.results[i]["polygon"]=[NE,SE,SW,NW];
+
+
+                    const photoref=result.results[i].photos[0].photo_reference;
+                    const photorefFieldPlaces = `&photo_reference=${photoref}`;
+                    result.results[i]["parkSearchUrl"]=urlPlaces + maxwidthPlaces + photorefFieldPlaces +  keyPlaces;
+
+                }
+                //Step 2: Sort in assending Distance and only keep the first 4 results.
+                    
+                    result.results.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                for(var i = 0; i < result.results.length; i++) {
+                    var obj = result.results[i];
+                    console.log(obj.name+" "+result.results[i]["distance"]);
+                }
+                return setParkList(result.results.slice(0,4));
+            } 
+                );
+        }
     }
 
     /* [Distance Calculator] */
@@ -308,6 +330,9 @@ const AlphaExerciseScreen = () => {
                     audioList={audioList}
                     audioListIdx={audioListIdx}
                     setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
+
+                    subscribeParkLocations={subscribeParkLocations}
+                    setSubscribeParkLocations={(item)=>setSubscribeParkLocations(item)}
                     
                     />
                 <WorkoutTab
@@ -336,6 +361,9 @@ const AlphaExerciseScreen = () => {
                     audioList={audioList}
                     audioListIdx={audioListIdx}
                     setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
+
+                    
+                    subscribeParkLocations={subscribeParkLocations}
                     />
             </Animated.ScrollView>
 

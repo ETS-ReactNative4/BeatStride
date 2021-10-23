@@ -18,6 +18,7 @@ const {width, height} = Dimensions.get("window")
  * @author NTU CZ2006 Team Alpha
  */
 const WorkoutTab = (props) => {
+    const currCoord=props.currCoord
     const [history, setHistory] = useState([])
     const [totalDistance, setTotalDistance] = useState(35000)
     const [totalRuns, setTotalRuns] = useState(6)
@@ -39,6 +40,9 @@ const WorkoutTab = (props) => {
     const typeList=props.typeList;
     const typeListIdx=props.typeListIdx;
     const setTypeListIdx=props.setTypeListIdx;
+
+    const subscribeParkLocations=props.subscribeParkLocations;
+
 
     const DATA = [
         {
@@ -265,6 +269,8 @@ const WorkoutTab = (props) => {
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.25,justifyContent:'space-evenly'}}>
                     {parkList.slice(0, 2).map(item => {return ( 
                         <WorkoutParkItem
+                            currCoord={currCoord}
+
                             parkData={item}
                             scrollToPage={scrollToPage}
                             setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
@@ -274,12 +280,18 @@ const WorkoutTab = (props) => {
                             typeList={typeList}
                             typeListIdx={typeListIdx}
                             setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+
+                            
+                            subscribeParkLocations={subscribeParkLocations}
                         />)})}
                 </View>
 
                 <View style={{...styles.list,flexDirection:'row',height: height * 0.28,paddingTop:5,paddingBottom:5,justifyContent:'space-evenly'}}>
                     {parkList.slice(2, 4).map(item => {return ( 
                         <WorkoutParkItem
+
+                                                    
+                            currCoord={currCoord}
                             parkData={item}
                             scrollToPage={scrollToPage}
                             setScrollToPage={(srollToPage)=>{setScrollToPage(srollToPage)}}
@@ -289,6 +301,8 @@ const WorkoutTab = (props) => {
                             typeList={typeList}
                             typeListIdx={typeListIdx}
                             setTypeListIdx={(listIdx)=>setTypeListIdx(listIdx)}
+
+                            subscribeParkLocations={subscribeParkLocations}
                         />)})}
                 </View>
 

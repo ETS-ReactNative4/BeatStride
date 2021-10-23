@@ -1,4 +1,5 @@
 import React from 'react';
+import {useState,useEffect} from 'react';
 import { StyleSheet,  Text,  View, Dimensions, Alert,Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
@@ -16,16 +17,12 @@ import moment from 'moment';
 const {width, height} = Dimensions.get("window")
 
 const WorkoutParkItem = (props) => {
-    const parkData=props.parkData;
-    const name=parkData.name;
-    const distance=parkData.distance.toFixed(1);
-    const photoref=parkData.photos[0].photo_reference;
-    const url  = 'https://maps.googleapis.com/maps/api/place/photo?'
-    const maxwidth = `maxwidth=400`;
-    const photorefField = `&photo_reference=${photoref}`;
-    const key = `&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ`;
-    const parkSearchUrl = url + maxwidth + photorefField +  key;
-    console.log(parkSearchUrl)
+    const subscribeParkLocations=props.subscribeParkLocations;
+    //const [parkdata,setParkData]=useState(props.parkData);
+    const [name,setName]=useState('Madison Park');
+    const [distance,setDistance]=useState(200);
+    const [parkSearchUrl,setParkSearchUrl]=useState('https://lh4.googleusercontent.com/-1wzlVdxiW14/USSFZnhNqxI/AAAAAAAABGw/YpdANqaoGh4/s1600-w400/Google%2BSydney');
+    const currCoord=props.currCoord
 
     const setScrollToPage=props.setScrollToPage;
 
@@ -34,14 +31,31 @@ const WorkoutParkItem = (props) => {
 
     const setNavToCoord=props.setNavToCoord;
 
+    const parkData=props.parkData;
+   
+    useEffect(() => {    
+        if(subscribeParkLocations){
+
+            setName(props.parkData.name)
+            setParkSearchUrl(props.parkData.parkSearchUrl)
+            setDistance(props.parkData.distance)
+    }
+        return () => {
+        }
+    }, [parkData])
+
     
 
     return (
             <TouchableOpacity 
                 onPress={() => {setScrollToPage(0);
                     //console.log("In History Park Item"+props.parkData.geometry.location.lat );
-                    setNavToCoord({latitude:parkData.geometry.location.lat,longitude:parkData.geometry.location.lng});     
-                    setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='SPACE';}))      
+                    if(subscribeParkLocations){
+                        setNavToCoord({latitude:parkData.geometry.location.lat,longitude:parkData.geometry.location.lng});     
+                        setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='SPACE';}))      
+                    }else{
+                        setTypeListIdx(typeList.findIndex((item)=>{return item.name ==='SPACE';}))
+                    }
                 }}
                 // onLongPress={removeHistory}
             >   
@@ -56,7 +70,7 @@ const WorkoutParkItem = (props) => {
                         <Text style={{fontSize:(name.length>20)?11:15,color:'white',fontWeight: 'bold',textAlign: 'center', }}>{name}</Text>  
                     </View>
                     <View style={{height:height * 0.05 }}> 
-                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{distance+"m"}</Text>
+                        <Text style={{color:'white', fontWeight: 'bold', textAlign: 'center'}}>{distance.toFixed(1)+"m"}</Text>
                     </View>
                     
                 </View>
