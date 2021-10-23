@@ -67,13 +67,13 @@ function DistanceScreen({ navigation }) {
                 </View>
             </View>
       <View style={styles.buttonbody}> 
-          <TouchableOpacity style={styles.buttonActive} activeOpacity={0.8} onPress={() => {setType(1)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==1? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(1)}}>
             <Text style={styles.buttonText}>Distance</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(2)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==2? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(2)}}>
             <Text style={styles.buttonText}>Speed</Text>
           </TouchableOpacity> 
-          <TouchableOpacity style={styles.button1} activeOpacity={0.8} onPress={() => {setType(3)}}>
+          <TouchableOpacity style={{...styles.button1, backgroundColor: type==3? '#555a61' : '#393C41' }} activeOpacity={0.8} onPress={() => {setType(3)}}>
             <Text style={styles.buttonText}>Activity</Text>
           </TouchableOpacity> 
       </View>
@@ -148,7 +148,7 @@ iconContainer:{
     height: 40,
     alignItems: 'center',
     paddingTop: 10,
-    backgroundColor: '#393C41',
+    //backgroundColor: '#393C41',
     marginLeft:10,
   },
   buttonActive:{
@@ -156,7 +156,7 @@ iconContainer:{
     height: 40,
     alignItems: 'center',
     paddingTop: 10,
-    backgroundColor: '#555a61',
+    //backgroundColor: '#555a61',
     marginLeft:10,
   },
   content:{
