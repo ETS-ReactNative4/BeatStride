@@ -964,7 +964,7 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
        try {
         db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey)
         .set({
-            //status: status,
+            status: status,
             //uid:uid2,
 
             creator:uid1,
@@ -985,7 +985,7 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
 
         try {
          db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey)
-         .set({//status: status,
+         .set({status: status,
             //uid:uid2,
 
             creator:uid1,
@@ -1258,4 +1258,40 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     }
 
 
+}
+
+
+
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requestFriendtoStartGame = async( friend_id ,type, distance, overallTime) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        //db_setGameInviteStatus(friend_id, user_id, "start", type, distance, overallTime);
+        //db_setGameRoomParticipants('game'+user_id,user_id,friend_id,"start", type , distance, overallTime);
+        db_setGameRoomSettings('game'+user_id,user_id,friend_id,"start", type , distance, overallTime);
+    } catch (error) {
+        console.log("Fail to send game request")
+    }
+}
+
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requestSelftoStartGame = async( friend_id ,type, distance, overallTime) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        //update friend gameInvite
+        //db_setGameInviteStatus(friend_id, user_id, "start", type, distance, overallTime);
+        //db_setGameRoomParticipants('game'+user_id,user_id,friend_id,"start", type , distance, overallTime);
+        db_setGameRoomSettings('game'+user_id,user_id,friend_id,"start", type , distance, overallTime);
+    } catch (error) {
+        console.log("Fail to send game request")
+    }
 }

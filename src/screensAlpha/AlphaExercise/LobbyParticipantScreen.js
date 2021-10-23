@@ -58,21 +58,11 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     const [empty,setEmpty]=useState(true)
 
+    const [selfStatus, setSelfStatus] = useState("request");
+    const [gameStatus, setgameStatus] = useState("request");
     const[allowBack,setAllowBack]=useState(false)
 
-    /**
-     * This helper method is a comparator to compare the keyword in the search bar to the displayName field in the userData.
-     * @param {Object} userData     A object which contains the user information retrieved from Firestore.
-     * @returns A boolean result based on string comparison.
-     */
-    const searchMatch = (userData) => {
-        const displayName = userData.displayName.toLowerCase()
-        const uid = userData.uid.toLowerCase()
-        const keyword = search.toLowerCase()
-
-        return (displayName.includes(keyword)) || (uid.includes(keyword))
-    }
-
+    
     /**
      * This is a helper method to filter the user based on uid from the search results.
      * @param {Object} userData     A object which contains the user information retrieved from Firestore.
@@ -82,28 +72,28 @@ const LobbyParticipantScreen = ({navigation, route}) => {
         const uid = userData.uid
         return !(uid === selfID);
     }
+    useEffect(() => {
+        if(selfStatus===gameStatus){
+            console.log('STARTTTTTTTTTTTTTT NOW GAMEEEEEEE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        }
+        return () => {
+            console.log("game Status Unmounted") // This worked for me
+          };
+    }, [selfStatus , gameStatus])
 
     /**
      * This is a render effect triggered upon component mount.
      * This retreives all the user information from Firestore.
      */
     useEffect(() => {
-        // Firestore.db_userList(
-            
-        //     (userList) => { setData(userList) 
-        //         console.log("DATALIST",userList.length)
-
-        //     },
-        //     (error) => { console.log(error) },
-        // )
-        
-
-
 
 
         Firestore.db_getUserDataSnapshot(
             (userData) => { 
-                setSelfID(userData.uid); 
+                if(userData!=null){
+                    setSelfID(userData.uid); 
+                }
+                
                 //setUserData(userData)
                 //setDisplayName(userData.displayName)
                 // console.log(userData.uid);
@@ -116,8 +106,11 @@ const LobbyParticipantScreen = ({navigation, route}) => {
         Firestore.db_getOtherDataSnapshot(
             organiserID,
             (userData) => {
-                setOrganiserData(userData)
-                setDisplayName(userData.displayName)
+                if(userData!=null){
+                    setOrganiserData(userData)
+                    setDisplayName(userData.displayName)
+                }
+
                 // console.log(userData)
             },
             (error) => {console.log(error)},
@@ -134,6 +127,9 @@ const LobbyParticipantScreen = ({navigation, route}) => {
             },
             (error) => {console.log(error)},
         )
+        return () => {
+            console.log("SnapShot Unmounted") // This worked for me
+          };
         
     }, [])
 
@@ -146,19 +142,21 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                         if(!userList.some(item=>item.uid===selfID )){
                             console.log("KICKEDOUT")
                             setAllowBack(true)
+                            setSelfStatus("request")
                         }
                         if(!userList.some(item=>item.uid===organiserID )){
                             console.log("KICKEDOUT")
                             setAllowBack(true)
+                            setSelfStatus("request")
                         }
                     }
                     var self=userList[userList.findIndex(item => item.uid==selfID)]
-                    console.log("Self")
-                    console.log(userList[userList.findIndex(item => item.uid==selfID)])
-                    console.log("Filtered")
-                    console.log(userList.filter(filterSelf))
-                    console.log("Recombined")
-                    console.log([self,...userList.filter(filterSelf)])
+                    // console.log("Self")
+                    // console.log(userList[userList.findIndex(item => item.uid==selfID)])
+                    // console.log("Filtered")
+                    // console.log(userList.filter(filterSelf))
+                    // console.log("Recombined")
+                    // console.log([self,...userList.filter(filterSelf)])
                     setFriendList([self,...userList.filter(filterSelf)])
                     //setFriendList([userList[userList.findIndex(item => item.uid==selfID)],...userList.filter(filterSelf)])
                     console.log(userList)
@@ -177,15 +175,26 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                     setDistanceKM((settings[0].raceType=='Distance')?Math.floor(settings[0].EndConditionDistance/1000):0);
                     setDistanceM((settings[0].raceType=='Distance')?Math.floor(Math.floor(settings[0].EndConditionDistance%1000)/100):0);
                     setRaceParam(settings[0].raceType);
+                    if( settings[0].status=="start"){
+                        console.log('STARTTTTTTTTT STATUSSSSSSSSSS#############################################################################################################################################################################')
+                        setgameStatus("start");
+
+                    }
                 },
                 (error) => {console.log(error)},
             ) 
         }
+        return () => {
+            console.log("SelfID Unmounted") // This worked for me
+          };
         
     }, [selfID])
 
     useEffect(() => {
         Firestore.storage_retrieveOtherProfilePic(organiserID, setDisplayPicture, () => setDisplayPicture({uri: ""}));
+        return () => {
+            console.log("Organiser ID Unmounted") // This worked for me
+          };
     }, [organiserID])
 
 
@@ -198,19 +207,31 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                     "Are you sure you want to leave the race? You will not be able to return.",
                     [ { text:"Cancel", onPress: () => {} }, 
                     { text:"Confirm", onPress: () => {
-                        setAllowBack(true);
-                        declineInvite()} }]
+                        //setAllowBack(true);
+                        declineInvite()
+                        navigation.dispatch(e.data.action);
+                    } }]
                 )
+            }else if(allowBack){
+                navigation.dispatch(e.data.action);
             }
         });
         return back;
+        // return ()=>{
+        //     back;
+        //     console.log("back unmounted");
+        // }
     } )
 
     useEffect(() => {
         if(allowBack){
             navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
-            setAllowBack(false)
+            //setAllowBack(false)
         }
+        return () => {
+            setAllowBack(false)
+            console.log("allowBack ID Unmounted") // This worked for me
+          };
     }, [allowBack])
 
 
@@ -236,9 +257,15 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     useEffect(() => {
         setDistance( distanceKM*1000+distanceM)
+        return () => {
+            console.log("Distance ID Unmounted") // This worked for me
+          };
     }, [distanceKM,distanceM])
     useEffect(() => {
         console.log("Distance SET"+ distance)
+        return () => {
+            console.log("Distance2 ID Unmounted") // This worked for me
+          };
     }, [distance])
 
 
@@ -258,7 +285,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     const declineInvite=()=>{
         Firestore.db_declineRequestFriendtoGame( organiserID);
-        setAllowBack(true);
+        //setAllowBack(true);
        
     }
 
@@ -382,12 +409,14 @@ const LobbyParticipantScreen = ({navigation, route}) => {
             <View style={{width: width, height: height * 0.145,flexDirection:'column', alignItems:'center',justifyContent:'space-around',backgroundColor:'red'}}>
                 <TouchableOpacity onPress={() => {
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                        setSelfStatus("accept");
                         Firestore.db_acceptRequestFriendtoGame( organiserID);
                         //navigation.navigate("LobbyOrganiserScreen2",{mode: "Time", chooseState:true})
                     }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
+                        setSelfStatus("decline")
                         declineInvite()
                         //setChooseState(true) 
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})

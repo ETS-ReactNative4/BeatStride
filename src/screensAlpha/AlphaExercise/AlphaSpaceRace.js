@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity,Animated  } from 'react-native';
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import {  Dimensions, Image} from 'react-native';
 import { CommonActions } from '@react-navigation/native'; 
 import * as Location from 'expo-location';
@@ -16,11 +16,25 @@ import AlphaRunDistance from './components/AlphaRunDistance';
 import AlphaRunTimer from './components/AlphaRunTimer';
 import AlphaRunCountdown from './AlphaRunCountdown';
 import HoldableButton from './components/CircularProgressBar/HoldableButton';
+//Added by Barnabas
+import AlphaRunMapTimeRace from './AlphaRunMapTimeRace';
+//End by Barnabas
 
 const {width, height} = Dimensions.get("window")
 
 const AlphaSpaceRace = ({navigation, route}) => {
 
+    //Added by Barnabas
+    const [scrollToPage, setScrollToPage]=useState(0);
+
+    /* SCROLL ANIMATIONS */
+    const [scrollRef , setScrollRef] = useState(null)
+
+    useEffect(() => {
+
+        setScrollToPage(1)
+    }, [])
+    //End by Barnabas
 
     /* [Page Navigation Render] */
     /**
@@ -426,7 +440,85 @@ const AlphaSpaceRace = ({navigation, route}) => {
       }
   },[runStatus])
 
+  //Added by Barnabas
+    
+
+
+    
+
+    useEffect(() => {
+        console.log("Here RICKY RICK")
+        console.log(scrollToPage)
+        if(scrollRef!=null){
+          scrollHandler(scrollToPage)  
+        }
+        
+    }, [scrollToPage])
+    /**
+     * This is a method to trigger the scroll effect on the "Run Tab" scrollview.
+     * @param {Number} num A number value to be multiplied with width value.
+     */
+    const scrollHandler = (num) => {
+        scrollRef.scrollTo({
+            x: width * num,
+            animated: true
+    })};
+  
+    const scrollX = useRef(new Animated.Value(0)).current;
+  
+    const RunIndicator = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#282B30', '#424549'],
+    });
+    const WorkoutIndicator = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#424549', '#282B30'],
+    });
+    const RunHighlight = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#FFFFFF', '#424549'],
+    });
+    const WorkoutHighlight = scrollX.interpolate({
+        inputRange: [ 0 , width],
+        outputRange: [ '#424549', '#FFFFFF'],
+    });
+    //End By Barnabas
+
+
     return (
+        <Animated.ScrollView
+        style={{...styles.scrollview,flexDirection:'row'}}
+        ref={ref => setScrollRef(ref)}
+        horizontal
+        snapToInterval={width}
+        decelerationRate="fast"
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+        disableIntervalMomentum={true}
+        onScroll={Animated.event( [{nativeEvent: {contentOffset: {x: scrollX}}}], {useNativeDriver: false} )}
+    >
+           {/* Map */}
+        <View style={styles.mapContainer}>
+
+            <View style={styles.componentContainer}>
+                <AlphaRunMapTimeRace
+                        runStatus={runStatus}
+                        mapPositions={mapPositions} 
+                        currCoord={currCoord}
+                    />
+            </View>
+            <View style={{
+                ...styles.componentContainer, position: 'absolute',
+                height:height,
+                width:width,
+                top: 0,
+                right: 0,
+                resizeMode: 'contain',
+                backgroundColor: 'transparent'
+            }}>
+            </View>
+        </View>
         <View style={{backgroundColor: '#282B30',flex: 1}}>
             <View style={screenStyle.screen}>
                     <View style = {{height: height*0.05, width: width}}>
@@ -515,6 +607,7 @@ const AlphaSpaceRace = ({navigation, route}) => {
                 countdownMsg={countdownMsg}
             />
         </View>
+    </Animated.ScrollView>
     );
 };
 
@@ -701,6 +794,43 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginHorizontal: 0.05*height
   },
+    //Added by Barnabas
+    mapContainer:{
+        width: width,
+        height: height,
+        //position: 'absolute',
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'yellow',
+        },
+    
+        scrollview:{
+            // backgroundColor: 'green',
+            height: height * 0.73,
+        },
+    
+        contentContainer:{
+            width: width,
+            height: height * 0.73,
+            backgroundColor: '#282B30',
+            //backgroundColor: 'yellow',
+            elevation:5,
+            shadowOffset: {
+                width: 20,
+                height: -20
+              },
+            shadowOpacity:0.9,
+            shadowRadius:10,
+            shadowColor:'black'
+            
+        }, 
+        componentContainer:{
+            width: width,
+            height: height * 1,
+            backgroundColor: '#282B30',
+        },  
+        //End Added by Barnabas
 });
 
 export default AlphaSpaceRace;
