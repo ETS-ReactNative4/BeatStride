@@ -45,6 +45,8 @@ const AlphaSpaceRace = ({navigation, route}) => {
   } )
   
   const mode = route.params.mode;
+  const polygonUserIsIn = route.params.polygonUserIsIn;
+  const polygonUserIsInName = route.params.polygonUserIsInName;
 
   const [countdown, setCountdown] = useState(true);           //Countdown popup
   const [countdownMsg, setCountdownMsg] = useState("5");      //Countdown message
@@ -352,7 +354,19 @@ const AlphaSpaceRace = ({navigation, route}) => {
       }
       if (runStatus === 6) {
           console.log("RunStatus - 6: Run End");
-
+          //check if coordinates still inside polygon
+          
+          const valid = true;
+          /*
+          if(mapPositions.length != 0){
+            for(var i = 0 ; i <= mapPositions.length; i++){
+                console.log(mapPositions[i])
+                if(!geolib.isPointInPolygon({latitude: mapPositions[i].latitude, longitude: mapPositions[i].longitude}, polygonUserIsIn)){
+                    valid = false;
+                    break;
+                }
+            }
+          }*/
           if (distance >= 10) {
               //Compile Data
               const record = {
@@ -365,6 +379,9 @@ const AlphaSpaceRace = ({navigation, route}) => {
                   date:date,
                   id:moment().format(),
                   mode:mode,
+                  polygonUserIsIn:polygonUserIsIn,
+                  valid:valid,
+                  polygonUserIsInName: polygonUserIsInName
               }             
 
               //Add to history + update personal stats (If the user sets to "recordHistory to true")
@@ -380,6 +397,9 @@ const AlphaSpaceRace = ({navigation, route}) => {
                           day:day,
                           date:date,
                           mode: mode,
+                          polygonUserIsIn:polygonUserIsIn,
+                          valid:valid,
+                          polygonUserIsInName: polygonUserIsInName
                       });
                   },
                   (error) => {console.log(error)}    

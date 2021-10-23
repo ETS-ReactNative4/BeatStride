@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef } from 'react';
-import { Text,Image,View, StyleSheet, Dimensions, ScrollView,FlatList } from 'react-native';
+import { Text,Image,View, StyleSheet, Dimensions, ScrollView,FlatList, Alert } from 'react-native';
 //Barn
 // import TempoRun from './TempoRun';
 // import BasicRun from './BasicRun';
@@ -64,6 +64,9 @@ const RunTab = (props) => {
     const audioListIdx=props.audioListIdx;
     const setAudioListIdx=props.setAudioListIdx;
 
+    const polygonUserIsIn=props.polygonUserIsIn;
+    const polygonUserIsInName=props.polygonUserIsInName;
+
     //For Game Invite
     const [friendList , setFriendList] = useState([]);
     const [empty, setEmpty]= useState(true);
@@ -71,6 +74,7 @@ const RunTab = (props) => {
     const [oragniserDisplayPicture, setOragniserDisplayPicture] = useState({uri:"https://images.unsplash.com/photo-1474978528675-4a50a4508dc3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTZ8fHByb2ZpbGV8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"})
     const [organiserDisplayName, setOrganiserDisplayName] = useState('');
     const [organiserUserData, setOrganiserUserData] = useState({});
+
     // // /**
     // //  * Begining UseEffect
     // //  */
@@ -386,11 +390,20 @@ const RunTab = (props) => {
                     <TouchableOpacity onPress={() => {
                         setStatus(6);
                         console.log("STARTEDDDDD "+ typeList[typeListIdx].name)
-                        if (typeList[typeListIdx].name=='SPACE'){
-                            navigation.navigate("RunScreenAlpha", {mode: "Space"})
+                        // Checking length of the polygon list
+                        console.log("length:" + polygonUserIsIn.length)
+                        if(typeList[typeListIdx].name=='SPACE' && polygonUserIsIn.length === 0){
+                            Alert.alert(
+                                "Not in a designated running area!",
+                                "Space racing requires you to be in a recognized running zone. To see the zones near you, head over to the workout tab!",
+                                [ { text:"Understood", onPress: () => {console.log("Alert closed")} } ]
+                            )
+                        }
+                        else if (typeList[typeListIdx].name=='SPACE' && polygonUserIsIn.length > 0){
+                            navigation.navigate("AlphaSpaceRace", {mode: "Space", polygonUserIsIn: polygonUserIsIn, polygonUserIsInName: polygonUserIsInName})
                         }else if(typeList[typeListIdx].name=='TIME'){
                             navigation.navigate("LobbyOrganiserScreen",{mode: "Time", chooseState:true})
-                        }
+                        } 
                     }}>
                         <Text style={styles.startButtonColor}>Start</Text>
                     </TouchableOpacity>

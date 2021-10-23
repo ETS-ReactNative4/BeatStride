@@ -12,7 +12,6 @@ import * as LocationLib from '../../api/LocationPermissions';
 
 const {width, height} = Dimensions.get("window")
 
-
 /**
  * This is a functional component representing the Exercise screen.
  * 
@@ -50,8 +49,9 @@ const AlphaExerciseScreen = () => {
     ])
     const[audioListIdx,setAudioListIdx]=useState(0);
 
-
-
+    // omkar
+    const [polygonUserIsIn, setPolygonUserIsIn] = useState([]); 
+    const [polygonUserIsInName, setPolygonUserIsInName] = useState("");
     useEffect(() => {
         handleParkSearch ();
         console.log(parkList);
@@ -64,10 +64,22 @@ const AlphaExerciseScreen = () => {
         console.log(parkList);
         for(var i = 0; i < parkList.length; i++) {
             var obj = parkList[i];
-            console.log(obj.name+" "+parkList[i]["distance"]);
+            console.log(obj.name+" "+parkList[i]["polygon"]);
+            isCoordinParkListPolygon(parkList[i].polygon, parkList[i].name);
         }
+        //console.log('polygon: ' + polygonUserIsIn);
       }, [parkList])
 
+    const isCoordinParkListPolygon = (polygon, name) => {
+        // check if current coordinate is in the polygon
+        // works! 
+        console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
+        if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon)){
+            // if through setPolygonUserIsIn(polygon)
+            setPolygonUserIsIn(polygon);
+            setPolygonUserIsInName(name);
+        }
+    } 
 
     const handleParkSearch = async() => {
         const url  = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
@@ -309,6 +321,8 @@ const AlphaExerciseScreen = () => {
                     audioListIdx={audioListIdx}
                     setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
                     
+                    polygonUserIsIn={polygonUserIsIn}
+                    polygonUserIsInName={polygonUserIsInName}
                     />
                 <WorkoutTab
                     currCoord={currCoord}
