@@ -405,7 +405,7 @@ const RunTab = (props) => {
                             navigation.navigate("LobbyOrganiserScreen",{mode: "Time", chooseState:true})
                         } 
                     }}>
-                        <Text style={styles.startButtonColor}>Start</Text>
+                        <Text style={{...styles.startButtonColor,backgroundColor:(typeList[typeListIdx].name=='SPACE' && polygonUserIsIn.length === 0)?"grey":'#7289D9'}}>Start</Text>
                     </TouchableOpacity>
                 </View>
 

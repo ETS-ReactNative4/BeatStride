@@ -61,6 +61,7 @@ const AlphaSpaceRace = ({navigation, route}) => {
   const mode = route.params.mode;
   const polygonUserIsIn = route.params.polygonUserIsIn;
   const polygonUserIsInName = route.params.polygonUserIsInName;
+  const [valid,setValid] = useState(true);
 
   const [countdown, setCountdown] = useState(true);           //Countdown popup
   const [countdownMsg, setCountdownMsg] = useState("5");      //Countdown message
@@ -302,10 +303,34 @@ const AlphaSpaceRace = ({navigation, route}) => {
       if (runStatus == 2 || runStatus == 8 || runStatus == 9) {
           positionValidation();
           // console.log("validating")
+
+          //OMKAR CHECK USER OUT OF BOUND HERE
+          //checkUserOutofBound();
+          //if out of inner bound warn
+          //if out of outer bound warn that user out of outer bound and say space race invaliid
       }
   },[positions])
 
   const [paused , setPaused] = useState(false);
+
+
+  const checkValidSpaceRace=()=>{
+    if(mapPositions.length != 0){
+        for(var i = 0 ; i < mapPositions.length; i++){
+            console.log("THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            // console.log(mapPositions[i])
+            // console.log("lat: "+mapPositions[i].latitude+"long: "+mapPositions[i].longitude)
+            //console.log(geolib.isPointInPolygon(mapPositions[i], polygonUserIsIn))
+            if(!geolib.isPointInPolygon(mapPositions[i], polygonUserIsIn)){
+                return false;
+                break;
+            }
+        }
+        return true;
+    }
+    return true;
+
+  }
   /* [Run Status Render] */
   /**
    * This is a render effect based on "runStatus" state.
@@ -370,17 +395,9 @@ const AlphaSpaceRace = ({navigation, route}) => {
           console.log("RunStatus - 6: Run End");
           //check if coordinates still inside polygon
           
-          const valid = true;
-          /*
-          if(mapPositions.length != 0){
-            for(var i = 0 ; i <= mapPositions.length; i++){
-                console.log(mapPositions[i])
-                if(!geolib.isPointInPolygon({latitude: mapPositions[i].latitude, longitude: mapPositions[i].longitude}, polygonUserIsIn)){
-                    valid = false;
-                    break;
-                }
-            }
-          }*/
+          var valid=checkValidSpaceRace();
+
+
           if (distance >= 10) {
               //Compile Data
               const record = {
@@ -503,9 +520,11 @@ const AlphaSpaceRace = ({navigation, route}) => {
 
             <View style={styles.componentContainer}>
                 <AlphaRunMapTimeRace
+                        item={{mode:mode,polygonUserIsIn:polygonUserIsIn,polygonUserIsInName:polygonUserIsInName }}
                         runStatus={runStatus}
                         mapPositions={mapPositions} 
                         currCoord={currCoord}
+
                     />
             </View>
             <View style={{
