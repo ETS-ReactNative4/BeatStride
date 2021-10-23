@@ -62,6 +62,12 @@ const AlphaSpaceRace = ({navigation, route}) => {
   const polygonUserIsIn = route.params.polygonUserIsIn;
   const polygonUserIsInName = route.params.polygonUserIsInName;
   const [valid,setValid] = useState(true);
+  const innerPolygonUserIsIn = [
+      {latitude: polygonUserIsIn[0].latitude - 0.0003, longitude: polygonUserIsIn[0].longitude - 0.0003},
+      {latitude: polygonUserIsIn[1].latitude + 0.0003, longitude: polygonUserIsIn[1].longitude - 0.0003},
+      {latitude: polygonUserIsIn[2].latitude + 0.0003, longitude: polygonUserIsIn[2].longitude + 0.0003},
+      {latitude: polygonUserIsIn[3].latitude - 0.0003, longitude: polygonUserIsIn[3].longitude + 0.0003}
+    ];
 
   const [countdown, setCountdown] = useState(true);           //Countdown popup
   const [countdownMsg, setCountdownMsg] = useState("5");      //Countdown message
@@ -257,13 +263,35 @@ const AlphaSpaceRace = ({navigation, route}) => {
       setCurrCoord(currPos);
   }
 
+  const checkUserOutofBound = () => {
+      // out of inner polygon
+      if(!geolib.isPointInPolygon(currCoord, innerPolygonUserIsIn) && geolib && geolib.isPointInPolygon(currCoord, polygonUserIsIn)){
+          //console.log("GET BACK IN YOU IDIOT");
+          TTS.getInitStatus().then(() => {
+                TTS.setDefaultLanguage('en-US');
+                // TTS.setDefaultRate(0.5);
+                TTS.speak('Heading out of designated run area.');
+          });
+      } 
+      // out of the run area completely
+      else if(!geolib.isPointInPolygon(currCoord, polygonUserIsIn)){
+          //console.log("RACE COMPROMISED");
+          TTS.getInitStatus().then(() => {
+                TTS.setDefaultLanguage('en-US');
+                // TTS.setDefaultRate(0.5);
+                TTS.speak('Run compromised. Please return to the running area.');
+          });
+      }
+  }
+  
+
   /* [Position Validation] */
   /**
    * This method checks the distance between the current position & previous position.
    * Only movement within Limit Range would be taken into consideration of position.
    */
   const positionValidation = () => {
-     
+      checkUserOutofBound()
       let currPos
       let prevPos
       if (positions.length == 1) {
