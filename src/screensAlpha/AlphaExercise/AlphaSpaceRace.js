@@ -16,6 +16,7 @@ import AlphaRunDistance from './components/AlphaRunDistance';
 import AlphaRunTimer from './components/AlphaRunTimer';
 import AlphaRunCountdown from './AlphaRunCountdown';
 import HoldableButton from './components/CircularProgressBar/HoldableButton';
+import RunSteps from './components/RunSteps';
 //Added by Barnabas
 import AlphaRunMapTimeRace from './AlphaRunMapTimeRace';
 //End by Barnabas
@@ -263,24 +264,33 @@ const AlphaSpaceRace = ({navigation, route}) => {
       setCurrCoord(currPos);
   }
 
+  const [validSpeak, setValidSpeak] = useState(true);
+  const [leaveValidSpeak, setLeaveValidSpeak] = useState(true);
+
   const checkUserOutofBound = () => {
       // out of inner polygon
       if(!geolib.isPointInPolygon(currCoord, innerPolygonUserIsIn) && geolib && geolib.isPointInPolygon(currCoord, polygonUserIsIn)){
           //console.log("GET BACK IN YOU IDIOT");
-          TTS.getInitStatus().then(() => {
-                TTS.setDefaultLanguage('en-US');
-                // TTS.setDefaultRate(0.5);
-                TTS.speak('Heading out of designated run area.');
-          });
-      } 
+          if(validSpeak){
+                TTS.getInitStatus().then(() => {
+                        TTS.setDefaultLanguage('en-US');
+                        // TTS.setDefaultRate(0.5);
+                        TTS.speak('Heading out of designated run area.');
+                });
+                setValidSpeak(false);
+            }
+        } 
       // out of the run area completely
       else if(!geolib.isPointInPolygon(currCoord, polygonUserIsIn)){
           //console.log("RACE COMPROMISED");
-          TTS.getInitStatus().then(() => {
-                TTS.setDefaultLanguage('en-US');
-                // TTS.setDefaultRate(0.5);
-                TTS.speak('Run compromised. Please return to the running area.');
-          });
+          if(leaveValidSpeak){
+                TTS.getInitStatus().then(() => {
+                        TTS.setDefaultLanguage('en-US');
+                        // TTS.setDefaultRate(0.5);
+                        TTS.speak('Run compromised. Please return to the running area.');
+                });
+                setLeaveValidSpeak(false);
+            }
       }
   }
   
@@ -576,11 +586,11 @@ const AlphaSpaceRace = ({navigation, route}) => {
                     <View>
                         <Text style={textStyle.timeDisplay}>
                             <AlphaRunTimer
-                            runStatus={runStatus}
-                            setDuration={setDuration}
-                            distance={distance}
-                            km={km}
-                            setKm={setKm}
+                                runStatus={runStatus}
+                                setDuration={setDuration}
+                                distance={distance}
+                                km={km}
+                                setKm={setKm}
                             />
                         </Text>
                     </View>
@@ -604,17 +614,21 @@ const AlphaSpaceRace = ({navigation, route}) => {
                     <View style = {speedLayout.ridesFriends}>
                         <View style={{width:0.5*width, height:0.15*height - 4}}>
                             <Text style={speedLayout.numbers}>
-                            {duration}
+                                {duration}
                             </Text>
                             <Text style={speedLayout.coloredRedspeed}>
-                            CURRENT SPEED
+                                CURRENT SPEED
                             </Text>
                         </View>
                     <View style = {speedLayout.verticleLine}>
                     </View>
                     <View style={{width:0.5*width, height:0.15*height-4}}>
                             <Text style={speedLayout.numbers}>
-                                {steps}
+                                <RunSteps
+                                    runStatus={runStatus}
+                                    steps={steps}
+                                    setSteps={setSteps}
+                                />
                             </Text>
                             <Text style={speedLayout.coloredRedspeed}>
                                 STEPS
