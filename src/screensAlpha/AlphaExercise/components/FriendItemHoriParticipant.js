@@ -16,7 +16,7 @@ const FriendItemHoriParticipant = (props) => {
     const item = props.item;
     const uid = item.uid;
     const status=item.status;
-    
+    const creatorUID=item.creator;
 
     const [displayName, setDisplayName] = useState('');
     const [displayPicture, setDisplayPicture] = useState({uri: ""});
@@ -62,7 +62,10 @@ const FriendItemHoriParticipant = (props) => {
             
             onLongPress={()=>{
                 console.log("LONG PRESSSSS")
-                Firestore.db_deleteFriendFromGame(uid)}}>
+                if(uid!==creatorUID){
+                    Firestore.db_deleteFriendFromGame(uid)
+                }
+                }}>
             <View style={styles.componentContainer}>
                 
                 {/* profile image */}

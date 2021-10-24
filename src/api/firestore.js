@@ -1166,6 +1166,8 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     }
 }
 
+
+
 /**
  * This is a method to obtain the list of gameRoomParticipantList.
  * @param {String} gameKey  A string Key to access gameRoom.
@@ -1188,6 +1190,9 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
         return onError(error);
     }
 }
+
+
+
 
 
 
@@ -1294,4 +1299,94 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
     } catch (error) {
         console.log("Fail to send game request")
     }
+}
+
+/**
+ * This is the main method for a user to send a friend request to another user.
+ * 
+ * @param {String} friend_id   A string representing the user id of the other user.
+ */
+ export const db_requesttoResetGameAtEnd = async( gameKey) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("game").doc(gameKey).collection("gameSettings").doc(gameKey)
+        .set({
+            status: 'request',
+            },
+            {merge: true});
+        // console.log("success")
+        } catch (error) {
+            console.log("Fail to set Game Room")
+        } 
+}
+
+//Racing Queries
+/**
+ * This is a method to obtain the list of gameRoomParticipantList.
+ * @param {String} gameKey  A string Key to access gameRoom.
+ * @param {Function} onSuccess  A function to be triggered upon success.
+ * @param {Function} onError    A function to be triggered on error.
+ * @returns 
+ */
+ export const db_gameRoomRacingParticipantListonSnapShot = (gameKey,onSuccess, onError) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("game")
+        .doc(gameKey).collection("gameInvite")
+        .orderBy('measurement', 'desc')
+        .onSnapshot((collection) => {
+            const userList = collection.docs.map((doc) => doc.data());
+            return onSuccess(userList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+/**
+ * This is a method to obtain the list of gameRoomParticipantList.
+ * @param {String} gameKey  A string Key to access gameRoom.
+ * @param {Function} onSuccess  A function to be triggered upon success.
+ * @param {Function} onError    A function to be triggered on error.
+ * @returns 
+ */
+ export const db_gameRoomSettingsGet = (gameKey,onSuccess, onError) => {
+    const user_id = Authentication.getCurrentUserId()
+
+    
+    try {
+        db.collection("game")
+        .doc(gameKey).collection("gameSettings").get()
+        .then((collection) => {
+            const userList = collection.docs.map((doc) => doc.data());
+            return onSuccess(userList);
+        })
+    } catch (error) {
+        return onError(error);
+    }
+}
+
+
+/**
+ * This is a helper method that decline gameInvite status between 2 users in a system.
+ * 
+ * @param {String} uid1                 A string representing user id of the first user.
+ * @param {String} uid2                 A string representing user id of the other user.
+ * @param {String} status               A string representing the new status/relationship between the 2 users.
+ * @param {String} type                 A string for Distance or Time .
+ * @param {int}    distance             A int representing total distance of race.
+ * @param {moment.duration} overallTime A moment.duration object representing total time of race. 
+ */
+ export const db_setMeasurementGameRoom = ( gameKey, measurement ) => {
+    const user_id = Authentication.getCurrentUserId()
+    try {
+        db.collection("game").doc(gameKey).collection("gameInvite").doc(user_id)
+        .set({
+            measurement: measurement,},
+            {merge: true});
+        console.log("success")
+    } catch (error) {
+        console.log("FailLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+    } 
+
 }

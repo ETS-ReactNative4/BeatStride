@@ -29,11 +29,9 @@ const AlphaTimeRace = ({navigation, route}) => {
     /* SCROLL ANIMATIONS */
     const [scrollRef , setScrollRef] = useState(null)
 
-    useEffect(() => {
-
-        setScrollToPage(1)
-    }, [])
     //End by Barnabas
+
+   
 
     /* [Page Navigation Render] */
     /**
@@ -71,6 +69,7 @@ const AlphaTimeRace = ({navigation, route}) => {
   const [positions, setPositions] = useState([startCoord]);   //Array of "valid" positons 
   const [mapPositions, setMapPositions] = useState([])
   const [distance, setDistance] = useState(0);
+  const [distance10m, setDistance10m] = useState(0);
 
   //Additonal (For Speaker)
   const [km, setKm] = useState(0);
@@ -81,6 +80,109 @@ const AlphaTimeRace = ({navigation, route}) => {
   const [timeStart, setTimeStart] = useState('')      //Start Time of Run
   const [day , setDay] = useState('')                 //Start Day of Run
   const [date, setDate] = useState('')                //Start Date of Run
+
+
+   //Required For Time Racing
+   const gameKey = route.params.gameKey;
+   const [selfID, setSelfID] = useState('')
+   const [friendList , setFriendList] = useState([]);
+   const [gameSettings,setGameSettings]= useState({});
+
+   const [runnerPositions, setRunnerPositions]=useState({});
+   const [newRunnerPositions, setNewRunnerPositions]=useState({});
+   useEffect(() => {
+       Firestore.db_getUserDataSnapshot(
+           (userData) => { 
+               if(userData!=null){
+                   setSelfID(userData.uid); 
+               }
+                   
+           },
+           (error) => { console.log(error) },
+       )
+       setScrollToPage(1)
+   }, [])
+
+   useEffect(() => {
+       if(selfID!=''){
+           console.log("In Alpha Time Race!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+           console.log("selfID:"+selfID)
+           console.log("gameKey:"+gameKey)
+           Firestore.db_gameRoomRacingParticipantListonSnapShot(
+               gameKey
+               ,(userList) => {
+                   // var self=userList[userList.findIndex(item => item.uid==selfID)]
+                   // var newUserList=[self,...userList.filter( (userData) => {return !(userData.uid === selfID);})]
+                   // setFriendList(newUserList)
+                   //console.log(userList)
+                   // var pos={};
+                   // for (var i=0;i<newUserList.length;i++){
+                   //     var string=newUserList[i].uid;
+                   //     pos[string]=i;
+                   // }
+
+                   setFriendList(userList)
+                   var pos={};
+                   for (var i=0;i<userList.length;i++){
+                       var string=userList[i].uid;
+                       pos[string]=i;
+                   }
+                   setRunnerPositions(pos);
+                   setNewRunnerPositions(pos);
+   
+                   //console.log(pos)
+
+               },
+               (error) => {console.log(error)},
+           ) 
+
+           Firestore.db_gameRoomSettingsGet(
+               gameKey
+               ,(settings) => {
+                   if( settings[0]!=null){
+                       // status: status,
+                       // creator:uid
+                       // gameKey:gameKey ,
+                       // raceType:type ,
+                       // EndConditionDistance: overallTime,
+                       // EndConditionDistance: distance,
+                       setGameSettings(settings)
+                   }
+               },
+               (error) => {console.log(error)},
+           ) 
+       }
+       
+   }, [selfID])
+
+   useEffect(() => {
+       console.log("check friendList **************************************************************************")
+       console.log(friendList)
+   }, [friendList])
+
+   useEffect(() => {
+       console.log("check gameSettings GET**************************************************************************")
+       console.log(gameSettings)
+   }, [gameSettings])
+
+   useEffect(() => {
+       console.log("check runnerPositions **************************************************************************")
+       console.log(runnerPositions)
+   }, [runnerPositions])
+
+   useEffect(() => {
+       console.log("check newRunnerPositions **************************************************************************")
+       console.log(newRunnerPositions)
+   }, [newRunnerPositions])
+
+   useEffect(() => {
+       console.log("DISTANCEEEEEEEEEEE10m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+       console.log(distance10m)
+       if(distance!=0){
+           Firestore.db_setMeasurementGameRoom( gameKey, distance10m )
+       }
+       
+   }, [distance10m])
 
 
   /*              /
@@ -280,6 +382,8 @@ const AlphaTimeRace = ({navigation, route}) => {
       const maxGain= 20;
       if ( (minGain < distGain) && (distGain < maxGain) ) {
           setDistance((prevCurrentDistance) => (Math.round( (prevCurrentDistance + distGain)*100 ))  / 100);
+          //Updates Every 50m
+          setDistance10m((prevCurrentDistance) => (Math.round( (prevCurrentDistance + distGain)*2 ))  / 2);
         //   push to db here
           setMapPositions((prev) => [...prev, currPos]);
       }
@@ -366,6 +470,8 @@ const AlphaTimeRace = ({navigation, route}) => {
       }
       if (runStatus === 6) {
           console.log("RunStatus - 6: Run End");
+          //Reset Game Room to status 'request'
+          Firestore.db_requesttoResetGameAtEnd(gameKey);
 
           if (distance >= 10) {
               //Compile Data
@@ -640,6 +746,18 @@ const AlphaTimeRace = ({navigation, route}) => {
                     countdown={countdown}
                     countdownMsg={countdownMsg}
                 />
+                <View style={{position:'absolute',top:0, right:0, width:width*0.2,height:width*0.2,}}>
+                    <TouchableOpacity onPress={() => {
+                        setDistance((prevCurrentDistance) => (prevCurrentDistance+5));
+                        //Updates Every 50m
+                        setDistance10m((prevCurrentDistance) => (prevCurrentDistance+5));
+                    }
+                    }>
+                        <View style={{width:width*0.2,height:width*0.2,}}>
+
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
         </Animated.ScrollView>
     );

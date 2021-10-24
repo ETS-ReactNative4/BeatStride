@@ -84,7 +84,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
         }
         if(allowBackState===4){
             console.log("gameStarted")
-            navigation.navigate("AlphaTimeRace", {mode: "Time"})
+            navigation.navigate("AlphaTimeRace", {mode: "Time", gameKey:'game'+selfID})
             
         }
         if(allowBackState===5){
