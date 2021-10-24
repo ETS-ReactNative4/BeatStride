@@ -1154,7 +1154,7 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
  export const db_gameRoomParticipantListonSnapShot = (gameKey,onSuccess, onError) => {
     const user_id = Authentication.getCurrentUserId()
     try {
-        db.collection("game")
+        return db.collection("game")
         .doc(gameKey).collection("gameInvite")
         .orderBy('status')
         .onSnapshot((collection) => {
@@ -1180,7 +1180,7 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
 
     
     try {
-        db.collection("game")
+        return db.collection("game")
         .doc(gameKey).collection("gameSettings")
         .onSnapshot((collection) => {
             const userList = collection.docs.map((doc) => doc.data());
@@ -1331,7 +1331,7 @@ export const db_userhistoryView = (uid, onSuccess, onError) => {
  export const db_gameRoomRacingParticipantListonSnapShot = (gameKey,onSuccess, onError) => {
     const user_id = Authentication.getCurrentUserId()
     try {
-        db.collection("game")
+        return db.collection("game")
         .doc(gameKey).collection("gameInvite")
         .orderBy('measurement', 'desc')
         .onSnapshot((collection) => {

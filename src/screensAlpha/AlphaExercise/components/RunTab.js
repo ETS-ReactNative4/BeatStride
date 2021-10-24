@@ -99,7 +99,7 @@ const RunTab = (props) => {
         //A subscribes to any changes on the database
         Firestore.db_gameRequestListonSnapshot(
             (userList) => {
-                if (userList.length == 0) {
+                if (userList.length === 0) {
                     
                     setEmpty(true);
                 } else {
@@ -110,7 +110,8 @@ const RunTab = (props) => {
                     setGameInviteList(userList)
                 }  
             },
-            (error) => {console.log(error)},
+            (error) => {console.log(error);
+                setEmpty(true);},
         )
         
 
@@ -330,7 +331,14 @@ const RunTab = (props) => {
             translation.value=withTiming(width * 0.425,{
                 duration:400
             });
-        }else if(!(typeList[typeListIdx].name==='TIME')) {
+        }else if(empty && (typeList[typeListIdx].name==='TIME')){
+            console.log("Entered")
+
+            translation.value=withTiming(0,{
+                duration:400
+            });
+        }
+        else if(!(typeList[typeListIdx].name==='TIME')) {
             translation.value=withTiming(0,{
                 duration:400
             });
@@ -569,6 +577,8 @@ const styles = StyleSheet.create({
         height: height * 0.09,
         alignItems:'center',
         justifyContent:'center',
+        textAlign:'center',
+        textAlignVertical:'center',
         position: 'absolute', 
         top: height * 0.6, 
         left: width * 0.025,

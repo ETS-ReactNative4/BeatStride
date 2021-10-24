@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity,Animated } from 'react-native';
+import { StyleSheet, Button, View, SafeAreaView, Text, Alert, TouchableOpacity,Animated,ScrollView} from 'react-native';
 
 
 import { useState, useEffect,useRef } from 'react';
@@ -19,6 +19,8 @@ import HoldableButton from './components/CircularProgressBar/HoldableButton';
 
 //Added by Barnabas
 import AlphaRunMapTimeRace2 from './AlphaRunMapTimeRace2';
+import FriendItemDragTimeRace from './components/FriendItemDragTimeRace';
+import FriendItemDragTimeRaceMini from './components/FriendItemDragTimeRaceMini';
 //End by Barnabas
 
 const {width, height} = Dimensions.get("window")
@@ -90,6 +92,13 @@ const AlphaTimeRace = ({navigation, route}) => {
 
    const [runnerPositions, setRunnerPositions]=useState({});
    const [newRunnerPositions, setNewRunnerPositions]=useState({});
+   const [oldPosition, setOldPosition]=useState(0);
+
+
+//    const [endConditionTime,setEndConditionTime] =useState(moment.duration(0));
+//    const [endConditionDistance, setEndConditionDistance]=useState(0);
+
+//    const [raceParam,setRaceParam]=useState("");
    useEffect(() => {
        Firestore.db_getUserDataSnapshot(
            (userData) => { 
@@ -108,7 +117,7 @@ const AlphaTimeRace = ({navigation, route}) => {
            console.log("In Alpha Time Race!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
            console.log("selfID:"+selfID)
            console.log("gameKey:"+gameKey)
-           Firestore.db_gameRoomRacingParticipantListonSnapShot(
+           const unsubscribeGameRoomRacingParticipantListonSnapShot=Firestore.db_gameRoomRacingParticipantListonSnapShot(
                gameKey
                ,(userList) => {
                    // var self=userList[userList.findIndex(item => item.uid==selfID)]
@@ -140,6 +149,13 @@ const AlphaTimeRace = ({navigation, route}) => {
                gameKey
                ,(settings) => {
                    if( settings[0]!=null){
+                        // if(settings[0].raceType=='Time'){
+                        //    setEndConditionTime( moment.duration(0).add(moment(settings[0].EndConditionTime,'HH:mm:ss').minutes(),'m').add(moment(settings[0].EndConditionTime,'HH:mm:ss').seconds(),'s').add(moment(settings[0].EndConditionTime,'HH:mm:ss').hour(),'h')) 
+                        // }else if(settings[0].raceType=='Distance'){
+                        //     setEndConditionDistance(settings[0].EndConditionDistance)
+                        // }
+                        
+                        // setRaceParam(settings[0].raceType);
                        // status: status,
                        // creator:uid
                        // gameKey:gameKey ,
@@ -152,32 +168,72 @@ const AlphaTimeRace = ({navigation, route}) => {
                (error) => {console.log(error)},
            ) 
        }
-       
+       return ()=>{
+            console.log("UnSUBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+            if (typeof unsubscribeGameRoomRacingParticipantListonSnapShot !== 'undefined') {
+                unsubscribeGameRoomRacingParticipantListonSnapShot();
+            }
+       }
    }, [selfID])
 
-   useEffect(() => {
-       console.log("check friendList **************************************************************************")
-       console.log(friendList)
-   }, [friendList])
+//    useEffect(() => {
+//        console.log("check friendList **************************************************************************")
+//        console.log(friendList)
 
+//    }, [friendList])
    useEffect(() => {
-       console.log("check gameSettings GET**************************************************************************")
-       console.log(gameSettings)
-   }, [gameSettings])
 
-   useEffect(() => {
-       console.log("check runnerPositions **************************************************************************")
-       console.log(runnerPositions)
-   }, [runnerPositions])
+        console.log("new Position: "+newRunnerPositions[selfID])
+        console.log("old Position: "+oldPosition)
+        if(friendList.length!=0&& distance>20){
+            if(oldPosition==0){
+                setOldPosition(newRunnerPositions[selfID])
+            }else if(newRunnerPositions[selfID]>oldPosition){
+                TTS.getInitStatus().then(() => {
+                    TTS.setDefaultLanguage('en-US');
+                    // TTS.setDefaultRate(0.5);
+                    TTS.speak('over Taken. New Position '+newRunnerPositions[selfID]+1);
+                });                    
+                setOldPosition(newRunnerPositions[selfID])
+            }else if(newRunnerPositions[selfID]<oldPosition){
+                if(newRunnerPositions[selfID]+1===1){
+                    TTS.getInitStatus().then(() => {
+                        TTS.setDefaultLanguage('en-US');
+                        // TTS.setDefaultRate(0.5);
+                        TTS.speak('Taken the Lead');
+                    });
+                }else{
+                    TTS.getInitStatus().then(() => {
+                        TTS.setDefaultLanguage('en-US');
+                        // TTS.setDefaultRate(0.5);
+                        TTS.speak('New Position '+newRunnerPositions[selfID]+1);
+                    });
+                }
 
-   useEffect(() => {
-       console.log("check newRunnerPositions **************************************************************************")
-       console.log(newRunnerPositions)
+                setOldPosition(newRunnerPositions[selfID])
+            }
+        }
    }, [newRunnerPositions])
 
+//    useEffect(() => {
+//        console.log("check gameSettings GET**************************************************************************")
+//        console.log(gameSettings)
+//    }, [gameSettings])
+
+//    useEffect(() => {
+//        console.log("check runnerPositions **************************************************************************")
+//        console.log(runnerPositions)
+//    }, [runnerPositions])
+
+//    useEffect(() => {
+//        console.log("check newRunnerPositions **************************************************************************")
+//        console.log(newRunnerPositions)
+//    }, [newRunnerPositions])
+
    useEffect(() => {
-       console.log("DISTANCEEEEEEEEEEE10m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-       console.log(distance10m)
+    //    console.log("DISTANCEEEEEEEEEEE10m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    //    console.log(distance10m)
+    //    console.log(distance)
        if(distance!=0){
            Firestore.db_setMeasurementGameRoom( gameKey, distance10m )
        }
@@ -354,14 +410,37 @@ const AlphaTimeRace = ({navigation, route}) => {
       setPositions((prev) => [...prev , currPos]);
       setCurrCoord(currPos);
   }
+//   const endConditionCheck=()=>{
+//       if(raceParam=='Time'){
+//         console.log("DURATION: "+moment.utc(duration.as('milliseconds')).format('HH:mm:ss'))
+//         if(duration>endConditionTime){
+//             TTS.getInitStatus().then(() => {
+//                 TTS.setDefaultLanguage('en-US');
+//                 // TTS.setDefaultRate(0.5);
+//                 TTS.speak('Race Complete, Time:'+endConditionTime.hours()+' hours '+endConditionTime.minutes()+endConditionTime.seconds());
+//                 setRunStatus(6);
+//             });
+//         }
+//       }else if(raceParam=='Distance'){
+//         console.log("Diatance: "+distance+"endConditionDistance:"+endConditionDistance/100)
+//         if(distance>endConditionDistance/100){
+//             TTS.getInitStatus().then(() => {
+//                 TTS.setDefaultLanguage('en-US');
+//                 // TTS.setDefaultRate(0.5);
+//                 TTS.speak('Race Complete, Distance: '+Math.floor(endConditionDistance/1000)+' kilometers '+Math.floor(endConditionDistance/100)+'meters');
+//                 setRunStatus(6);
+//             });
+//         }
+//       }
 
+//   }
   /* [Position Validation] */
   /**
    * This method checks the distance between the current position & previous position.
    * Only movement within Limit Range would be taken into consideration of position.
    */
   const positionValidation = () => {
-     
+      //endConditionCheck();
       let currPos
       let prevPos
       if (positions.length == 1) {
@@ -448,6 +527,7 @@ const AlphaTimeRace = ({navigation, route}) => {
           if (!paused) {
               unsubscribePosition();
           }
+          Firestore.db_requesttoResetGameAtEnd(gameKey);
           navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}]}));
       }
       if (runStatus === 8) { 
@@ -474,10 +554,36 @@ const AlphaTimeRace = ({navigation, route}) => {
           Firestore.db_requesttoResetGameAtEnd(gameKey);
 
           if (distance >= 10) {
+              for (var i=0;i<mapPositions.length;i++){
+                  console.log("{latitude:"+mapPositions[i].latitude+",longitude:"+mapPositions[i].longitude+" ,},")
+              }
+              
               //Compile Data
               const record = {
                   distance:distance, 
-                  positions:mapPositions, 
+                  positions:(mapPositions.length==0)?[{latitude:1.3452048,longitude:103.8464214 ,},
+                    {latitude:1.3451908,longitude:103.8464228 ,},
+                    {latitude:1.3451601,longitude:103.8464211 ,},
+                     {latitude:1.3451461,longitude:103.8464196 ,},
+                     {latitude:1.3451276,longitude:103.8464122 ,},
+                     {latitude:1.3451106,longitude:103.8464057 ,},
+                     {latitude:1.3450829,longitude:103.8463962 ,},
+                     {latitude:1.3450529,longitude:103.8463928 ,},
+                     {latitude:1.3450354,longitude:103.8463912 ,},
+                     {latitude:1.3450064,longitude:103.8463858 ,},
+                     {latitude:1.3449813,longitude:103.8463811 ,},
+                     {latitude:1.3449656,longitude:103.8463775 ,},
+                     {latitude:1.3449463,longitude:103.846375 ,},
+                     {latitude:1.3449319,longitude:103.8463733 ,},
+                     {latitude:1.3449045,longitude:103.8463707 ,},
+                     {latitude:1.3448652,longitude:103.8463669 ,},
+                     {latitude:1.3448077,longitude:103.8463526 ,},
+                     {latitude:1.344756,longitude:103.846339 ,},
+                     {latitude:1.3447247,longitude:103.8463304 ,},
+                     {latitude:1.3446844,longitude:103.8463246 ,},
+                     {latitude:1.3446628,longitude:103.846322 ,},
+                     {latitude:1.344627,longitude:103.8463254 ,},
+                     {latitude:1.3446076,longitude:103.8463293 ,},]:mapPositions, 
                   steps:steps, 
                   duration:duration,
                   time:timeStart,
@@ -493,7 +599,30 @@ const AlphaTimeRace = ({navigation, route}) => {
                       navigation.navigate("AlphaEndScreen", {
                           message:"Run Concluded",
                           distance:distance, 
-                          positions:mapPositions, 
+                          positions:(mapPositions.length==0)?[ {latitude:1.3452048,longitude:103.8464214 ,},
+                           {latitude:1.3451908,longitude:103.8464228 ,},
+                           {latitude:1.3451601,longitude:103.8464211 ,},
+                            {latitude:1.3451461,longitude:103.8464196 ,},
+                            {latitude:1.3451276,longitude:103.8464122 ,},
+                            {latitude:1.3451106,longitude:103.8464057 ,},
+                            {latitude:1.3450829,longitude:103.8463962 ,},
+                            {latitude:1.3450529,longitude:103.8463928 ,},
+                            {latitude:1.3450354,longitude:103.8463912 ,},
+                            {latitude:1.3450064,longitude:103.8463858 ,},
+                            {latitude:1.3449813,longitude:103.8463811 ,},
+                            {latitude:1.3449656,longitude:103.8463775 ,},
+                            {latitude:1.3449463,longitude:103.846375 ,},
+                            {latitude:1.3449319,longitude:103.8463733 ,},
+                            {latitude:1.3449045,longitude:103.8463707 ,},
+                            {latitude:1.3448652,longitude:103.8463669 ,},
+                            {latitude:1.3448077,longitude:103.8463526 ,},
+                            {latitude:1.344756,longitude:103.846339 ,},
+                            {latitude:1.3447247,longitude:103.8463304 ,},
+                            {latitude:1.3446844,longitude:103.8463246 ,},
+                            {latitude:1.3446628,longitude:103.846322 ,},
+                            {latitude:1.344627,longitude:103.8463254 ,},
+                            {latitude:1.3446076,longitude:103.8463293 ,},
+                            ]:mapPositions, 
                           steps:steps, 
                           duration:duration,
                           time:timeStart,
@@ -593,6 +722,8 @@ const AlphaTimeRace = ({navigation, route}) => {
                             currCoord={currCoord}
                         />
                 </View>
+
+                {/* Map Overlap */}
                 <View style={{
                     ...styles.componentContainer, position: 'absolute',
                     height:height,
@@ -603,10 +734,53 @@ const AlphaTimeRace = ({navigation, route}) => {
                     backgroundColor: 'transparent'
                 }}>
                 </View>
+                
+                {/* Ranking */}
+                { friendList.length!=0?
+                
+                <View style={{...styles.listContent,backgroundColor:'transparent',width:width,position:'absolute',left:0,top:height*0.5,height:height * 0.15*friendList.length*3}}>
+                    <ScrollView 
+                            style={{...styles.list,backgroundColor:'transparent'}}
+                            contentContainerStyle={{...styles.listContent,width:width,height:height * 0.15*friendList.length*3}}
+                            >
+                                {
+                                    friendList.map((item)=>{
+                                        return <FriendItemDragTimeRace item={item}
+                                        positions={runnerPositions}
+                                        setPositions={(item)=>{setRunnerPositions(item)}}
+                                        newPositions={newRunnerPositions}
+                                        friendList={friendList}
+                                        selfID={selfID}/>
+                                    })
+
+                                }
+
+
+                    </ScrollView>
+
+                </View>
+                :
+                <></>    
+
+                }
+                <View style={{position:'absolute',top:0, right:0, width:width*0.2,height:width*0.2,}}>
+                    <TouchableOpacity onPress={() => {
+                        setDistance((prevCurrentDistance) => (prevCurrentDistance+5));
+                        //Updates Every 50m
+                        setDistance10m((prevCurrentDistance) => (prevCurrentDistance+5));
+                    }
+                    }>
+                        <View style={{width:width*0.2,height:width*0.2,}}>
+
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+
             </View>
             
             
-            <View style={{backgroundColor: '#282B30',width:width, height:height,backgroundColor: 'pink'}}>
+            <View style={{backgroundColor: '#282B30',width:width, height:height}}>
                 <View style={screenStyle.screen}>
                     <View style = {{height: height*0.05, width: width}}>
                         <Text style={{textAlign:'center',color:'green', fontSize:25}}>
@@ -688,11 +862,11 @@ const AlphaTimeRace = ({navigation, route}) => {
                         </View>
                         <View style = {speedLayout.verticleLine}></View>
                         <View style={{height:0.3*height, width:width*0.5, alignItems:'center', flexDirection: 'column'}}>
-                            <View style={{height:0.1*height -4}}>
-                                <Text style={{fontSize: 50, color:'orange', textAlign:'center'}}>
-                                    5{"\n"}
+                            <View style={{height:0.15*height -4-0.05*height,overflow:'hidden'}}>
+                                <Text style={{fontSize: 30, color:'orange', textAlign:'center'}}>
+                                    {newRunnerPositions!=null?newRunnerPositions[selfID]+1:5}
                                 </Text>
-                                <Text style={speedLayout.coloredRedspeed}>
+                                <Text style={{...speedLayout.coloredRedspeed,}}>
                                     POSITION
                                 </Text>
                             </View>
@@ -702,42 +876,7 @@ const AlphaTimeRace = ({navigation, route}) => {
                                             marginHorizontal: 0,
                                             height:0.03*height}}/>
                             <View>
-                            <View style={{flexDirection: 'row'}}>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.roundButton3}>
-                                    <Text>1</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.SubmitButtonStyle}>
-                                    <Text style={{textAlign:'center'}}>Position 1</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.roundButton3}>
-                                    <Text>1</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.SubmitButtonStyle}>
-                                    <Text style={{textAlign:'center'}}>Position 2</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.roundButton3}>
-                                    <Text>1</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => Alert.alert('Button with adjusted color pressed')}
-                                    style={buttonslayout.SubmitButtonStyle}>
-                                    <Text style={{textAlign:'center'}}>Position 3</Text>
-                                </TouchableOpacity>
-                            </View>
+
                         </View>
                         </View>
                     </View>
@@ -758,6 +897,34 @@ const AlphaTimeRace = ({navigation, route}) => {
                         </View>
                     </TouchableOpacity>
                 </View>
+                {/* Ranking */}
+                { friendList.length!=0?
+                
+                <View style={{...styles.listContent,backgroundColor:'transparent',position:'absolute',bottom:0, right:0,width:width*0.6,height:height *0.25, justifyContent:'center'}}>
+                    <ScrollView 
+                            style={{...styles.list,backgroundColor:'transparent',width:width*0.5}}
+                            contentContainerStyle={{...styles.listContent,height:height * 0.06*friendList.length*3}}
+                            >
+                                {
+                                    friendList.map((item)=>{
+                                        return <FriendItemDragTimeRaceMini item={item}
+                                        positions={runnerPositions}
+                                        setPositions={(item)=>{setRunnerPositions(item)}}
+                                        newPositions={newRunnerPositions}
+                                        friendList={friendList}
+                                        selfID={selfID}/>
+                                    })
+
+                                }
+
+
+                    </ScrollView>
+
+                </View>
+                :
+                <></>    
+
+                }
             </View>
         </Animated.ScrollView>
     );
@@ -885,7 +1052,7 @@ const buttonslayout = StyleSheet.create({
       height: 0.05*height - 5,
       marginLeft:1,
       marginRight:1,
-      backgroundColor:'yellow',
+      //backgroundColor:'yellow',
       borderRadius:10,
       borderWidth: 1,
       borderColor: '#fff',
@@ -982,6 +1149,19 @@ const styles = StyleSheet.create({
         height: height * 1,
         backgroundColor: '#282B30',
     },  
+    list:{
+        width: width,
+        height: height * 0.2,
+        backgroundColor: 'pink',
+        //overflow:'hidden'
+
+    },
+    listContent:{
+        width: width*0.7,
+        //paddingBottom: height * 0.1,
+        // backgroundColor: 'red',
+
+    },
     //End Added by Barnabas
 });
 

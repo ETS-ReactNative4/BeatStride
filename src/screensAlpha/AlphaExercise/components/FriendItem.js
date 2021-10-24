@@ -83,13 +83,16 @@ const FriendItem = (props) => {
                     
                 </View>
                 {(addedFriendList.some((item)=>{return item.uid==uid}))?
-                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red",borderRadius:height}}>
-                    <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.08,aspectRatio: 1,borderRadius:height}} source={displayPicture}/>
+                // <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red",borderRadius:height}}>
+                //     <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.08,aspectRatio: 1,borderRadius:height}} source={displayPicture}/>
+                // </View>
+                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "white",borderRadius:height}}>
+                    <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.08,aspectRatio: 1,borderRadius:height,tintColor:'green'}} source={require('../../../assets/icons/RunTabAcceptButton.png')}/>
                 </View>
                 :
                 <></>}
                 
-
+                
             </View>
         </TouchableOpacity>
     );
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
         width: width * 0.9 - (height * 0.15)-30,
         marginLeft: width * 0.05,
         justifyContent: 'center',
-        backgroundColor: 'grey',
+        //backgroundColor: 'grey',
     },
     nameContainer:{
         height: height * 0.04,
