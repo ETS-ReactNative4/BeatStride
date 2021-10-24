@@ -194,7 +194,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
 
     useEffect(() => {
         Firestore.storage_retrieveOtherProfilePic(selfID, setDisplayPicture, () => setDisplayPicture({uri: ""}));
-        Firestore.db_gameRoomParticipantListonSnapShot(
+        const unSubscribeGameRoomParticipantListonSnapShot=Firestore.db_gameRoomParticipantListonSnapShot(
             "game"+selfID
             ,(userList) => {
                 if(userList.length!=0){
@@ -217,7 +217,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
         )
         
         //Added for Organiser to detect chages in room settings
-        Firestore.db_gameRoomSettingsonSnapShot(
+        const unSubscribeGameRoomSettingsonSnapShot=Firestore.db_gameRoomSettingsonSnapShot(
             "game"+selfID
             ,(settings) => {
                 if(settings.length!=0){
@@ -231,6 +231,13 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
             },
             (error) => {console.log(error)},
         ) 
+        return()=>{
+            if (typeof  unSubscribeGameRoomParticipantListonSnapShot !== 'undefined' && typeof  unSubscribeGameRoomSettingsonSnapShot !== 'undefined' ) {
+                console.log("UnSUBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+                unSubscribeGameRoomParticipantListonSnapShot();
+                unSubscribeGameRoomSettingsonSnapShot();
+            }
+        }
     }, [selfID])
 
     /**
@@ -486,7 +493,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
             {/*Chosen List*/}
             {(chooseState==true)?
             
-                <View style={{width: width, height: height * 0.145,borderWidth:5, flexDirection:'row'}}>
+                <View style={{width: width, height: height * 0.145, flexDirection:'row',backgroundColor:"#1C2222"}}>
                     <FlatList
                         horizontal
                         showsHorizontalScrollIndicator ={false}
@@ -556,7 +563,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                     }
                 />
                 :
-                <View style={{width: width*0.92, height: height * 0.560,borderWidth:5,borderColor:"purple", flexDirection:'row', alignSelf:'center', overflow:'hidden'}}>
+                <View style={{width: width*0.92, height: height * 0.560,borderWidth:0,borderColor:"purple", flexDirection:'row', alignSelf:'center', overflow:'hidden'}}>
                 <FlatList
                     style={styles.list3}
                     numColumns={4}
@@ -570,7 +577,7 @@ const LobbyOrganiserScreen = ({navigation, route}) => {
                     }
                 />
 
-        </View>
+            </View>
             }
             
         </SafeAreaView>
@@ -596,7 +603,7 @@ const styles = StyleSheet.create({
         //backgroundColor: 'pink',
     },
     scrollPickerContainer:{
-        height: height * 0.08,
+        height: height * 0.0855,
         width: width * 0.40,
         borderColor: '#72767D',
         borderWidth: 1,
@@ -684,20 +691,20 @@ const styles = StyleSheet.create({
     list:{
         width: width,
         height: height * 0.5,
-        backgroundColor: 'red',
+        //backgroundColor: 'red',
 
     },
     list2:{
         width: width*0.75,
         height: height * 0.145,
         //backgroundColor: 'red',
-        backgroundColor:'green'
+        //backgroundColor:'green'
     },
     list3:{
         //width: width*0.70,
         height: height * 0.735,
         //backgroundColor: 'red',
-        backgroundColor:'pink',
+        //backgroundColor:'pink',
   
     },
     listContent:{
@@ -730,6 +737,7 @@ const styles = StyleSheet.create({
         height: height * 0.06,
         //backgroundColor:'red',
         textAlign:'center',
+        textAlignVertical:'center',
         fontWeight: 'bold',
         fontSize: 18,
         color:'white',

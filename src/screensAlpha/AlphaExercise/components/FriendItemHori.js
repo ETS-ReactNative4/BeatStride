@@ -68,10 +68,12 @@ const FriendItemHori = (props) => {
                         <Image style={styles.pictureContainer} source={displayPicture} />
                     }
                 </View>
-                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red",borderRadius:height}}>
+                {/* <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red",borderRadius:height}}>
                     <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.05,aspectRatio: 1,borderRadius:height}} source={displayPicture}/>
+                </View> */}
+                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "white",borderRadius:height}}>
+                    <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.05,aspectRatio: 1,borderRadius:height,tintColor:'red', backgroundColor:'transparent'}} source={require('../../../assets/icons/RunTabDeclineButton.png')}/>
                 </View>
-                
                 {/* Data Container */}
                 <View style={styles.dataContainer}>
 
@@ -93,10 +95,11 @@ const styles = StyleSheet.create({
         width: height * 0.12,
         flexDirection: 'column',
         alignItems: 'center',
+        marginTop:5
         // justifyContent: 'space-around',
         // backgroundColor: 'purple',
         // borderColor: '#FFFFFF',
-        borderWidth: 1,
+        //borderWidth: 1,
     },
     pictureContainer:{
         height: height * 0.1,
@@ -108,20 +111,21 @@ const styles = StyleSheet.create({
         height: height * 0.04,
         justifyContent: 'center',
         // backgroundColor: 'red',
-        borderColor: 'red',
-        borderWidth: 1,
+        //borderColor: 'red',
+        //borderWidth: 1,
     },
     nameContainer:{
         height: height * 0.04,
         width: height * 0.12,
         //justifyContent: 'center',
-        backgroundColor: 'purple',
+        //backgroundColor: 'purple',
     },
     nameText:{
         fontWeight: 'bold',
         fontSize: 12,
         color: '#FFFFFF',
-        backgroundColor:'blue',
+        
+        //backgroundColor:'blue',
         textAlign:'center',
 
     },

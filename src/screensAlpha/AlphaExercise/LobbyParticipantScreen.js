@@ -194,7 +194,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     useEffect(() => {
         if(selfID!=''){
-            Firestore.db_gameRoomParticipantListonSnapShot(
+            const unSubscribeGameRoomParticipantListonSnapShot= Firestore.db_gameRoomParticipantListonSnapShot(
                 gameKey
                 ,(userList) => {
                     if(userList.length!=0){
@@ -224,7 +224,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                 (error) => {console.log(error)},
             ) 
 
-            Firestore.db_gameRoomSettingsonSnapShot(
+            const unSubscribeGameRoomSettingsonSnapShot= Firestore.db_gameRoomSettingsonSnapShot(
                 gameKey
                 ,(settings) => {
                     setHour((settings[0].raceType=='Time')?moment(settings[0].EndConditionTime,'HH:mm:ss').hour():0);
@@ -243,9 +243,13 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                 (error) => {console.log(error)},
             ) 
         }
-        return () => {
-            console.log("SelfID Unmounted") // This worked for me
-          };
+        return()=>{
+            if (typeof  unSubscribeGameRoomParticipantListonSnapShot !== 'undefined' && typeof  unSubscribeGameRoomSettingsonSnapShot !== 'undefined' ) {
+                console.log("UnSUBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+                unSubscribeGameRoomParticipantListonSnapShot();
+                unSubscribeGameRoomSettingsonSnapShot();
+            }
+        }
         
     }, [selfID])
 
@@ -328,7 +332,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     return (
         <SafeAreaView style={styles.screen}>
-            <View style={{height:0.12*height, flexDirection:'row', justifyContent:'space-between',backgroundColor:'blue'}}>
+            <View style={{height:0.12*height, flexDirection:'row', justifyContent:'space-between'}}>
                 <View style={{height:0.12*height, flexDirection:'column', justifyContent:'space-between'}}>
                     <Text style={{...styles.timeLabel,paddingLeft: width * 0.02,}}>Organiser</Text>
                     <View style={styles.componentContainer}>
@@ -443,14 +447,17 @@ const LobbyParticipantScreen = ({navigation, route}) => {
             <Text style={{...styles.timeLabel,fontSize:14,paddingLeft: width * 0.02,height:height*0.04}}>Warning: Runsafely and obey traffic laws</Text>
             
 
-            <View style={{width: width, height: height * 0.145,flexDirection:'column', alignItems:'center',justifyContent:'space-around',backgroundColor:'red'}}>
+            <View style={{width: width, height: height * 0.145,flexDirection:'column', alignItems:'center',justifyContent:'space-around'}}>
                 <TouchableOpacity onPress={() => {
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
-                        setSelfStatus("accept");
-                        Firestore.db_acceptRequestFriendtoGame( organiserID);
+                        if(selfStatus=="request"){
+                            setSelfStatus("accept");
+                            Firestore.db_acceptRequestFriendtoGame( organiserID);
+                        }
+                        
                         //navigation.navigate("LobbyOrganiserScreen2",{mode: "Time", chooseState:true})
                     }}>
-                        <Text style={styles.startButtonColor}>Start</Text>
+                        <Text style={{...styles.startButtonColor,backgroundColor:selfStatus==="request"?'#7289D9':'grey'}}>{selfStatus==="request"?"Accept":"Orgainser to Start"}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
                         setSelfStatus("decline")
@@ -461,7 +468,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                         <Text style={{...styles.startButtonColor,backgroundColor:'transparent',borderWidth:3,borderColor:'#7289D9'}}>Decline</Text>
                 </TouchableOpacity>
             </View>
-            <View style={{width: width*0.92, height: height * 0.560,borderWidth:5,borderColor:"purple", flexDirection:'row', alignSelf:'center', overflow:'hidden'}}>
+            <View style={{width: width*0.92, height: height * 0.560,borderWidth:0,borderColor:"purple", flexDirection:'row', alignSelf:'center', overflow:'hidden'}}>
                     <FlatList
                         style={styles.list2}
                         numColumns={4}
@@ -588,7 +595,7 @@ const styles = StyleSheet.create({
         width: width,
         height: height * 0.13,
         alignItems: 'center',
-        backgroundColor: 'pink',
+        //backgroundColor: 'pink',
     },
     list:{
         width: width,
@@ -600,7 +607,7 @@ const styles = StyleSheet.create({
         //width: width*0.70,
         height: height * 0.735,
         //backgroundColor: 'red',
-        backgroundColor:'pink',
+        //backgroundColor:'pink',
   
     },
     listContent:{

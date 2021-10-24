@@ -69,7 +69,7 @@ const FriendItemHoriParticipant = (props) => {
             <View style={styles.componentContainer}>
                 
                 {/* profile image */}
-                <View style={styles.pictureContainer}>
+                <View style={{...styles.pictureContainer,marginTop:5}}>
                     { (displayPicture.uri != "") &&
                         <Image style={{...styles.pictureContainer,borderRadius:height,borderColor:(status=='request')?'purple':((status=='decline')?'red':'green'),borderWidth:(status=='request')?3:3}} source={displayPicture} />
                     }
@@ -84,7 +84,7 @@ const FriendItemHoriParticipant = (props) => {
                     {/* Display name */}
                     <View style={styles.nameContainer}>
                         <Text style={styles.nameText} numberOfLines={1}>{(displayName.length>4)?(displayName.slice(0,4)+"..."):(displayName)}</Text>
-                        <Text style={{...styles.nameText,fontSize:9,borderRadius:5,margin:2,backgroundColor:(status=='request')?'purple':((status=='decline')?'red':'green')}} numberOfLines={1}>{(status==null)?"request":status}</Text>
+                        <Text style={{...styles.nameText,fontSize:9,borderRadius:5,backgroundColor:(status=='request')?'purple':((status=='decline')?'red':'green')}} numberOfLines={1}>{(status==null)?"request":status}</Text>
                     </View>
                     
                 </View>
@@ -96,40 +96,50 @@ const FriendItemHoriParticipant = (props) => {
 
 const styles = StyleSheet.create({
     componentContainer:{
-        height: height * 0.155,
-        width: height * 0.12,
+        height: height * 0.160-6,
+        width: height * 0.12-6,
         flexDirection: 'column',
         alignItems: 'center',
         // justifyContent: 'space-around',
         // backgroundColor: 'purple',
         // borderColor: '#FFFFFF',
-        borderWidth: 1,
+        //borderWidth: 1,
+        borderRadius:6,
+        backgroundColor:"#1C2222",
+        margin:3,
     },
     pictureContainer:{
         height: height * 0.1,
         aspectRatio: 1,
         borderRadius: height,
         backgroundColor: '#4F535C',
+        //
     },
     dataContainer:{
-        height: height * 0.055,
+        height: height * 0.060-3,
         justifyContent: 'center',
         // backgroundColor: 'red',
         borderColor: 'red',
-        borderWidth: 1,
+        //borderWidth: 1,
     },
     nameContainer:{
-        height: height * 0.04,
-        width: height * 0.12,
+        height: height * 0.060-3,
+        width: height * 0.12-6,
+        overflow:'hidden',
+        //borderRadius:6,
         //justifyContent: 'center',
         //backgroundColor: 'purple',
+        marginLeft:3,
+        marginRight:3,
     },
     nameText:{
         fontWeight: 'bold',
         fontSize: 11,
         color: '#FFFFFF',
-        backgroundColor:'blue',
+        //backgroundColor:'blue',
         textAlign:'center',
+        marginLeft:3,
+        marginRight:3,
 
     },
     idContainer:{
