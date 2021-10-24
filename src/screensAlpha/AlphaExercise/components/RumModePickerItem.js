@@ -20,7 +20,7 @@ const {width, height} = Dimensions.get("window")
     const setItemIdx=props.setItemIdx;
     const title=props.title;
 
-    console.log("IN PICKER "+itemList)
+    //console.log("IN PICKER "+itemList)
 
 
 
