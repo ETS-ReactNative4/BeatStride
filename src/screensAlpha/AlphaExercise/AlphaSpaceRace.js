@@ -621,7 +621,7 @@ const AlphaSpaceRace = ({navigation, route}) => {
                     <View style = {speedLayout.ridesFriends}>
                         <View style={{width:0.5*width, height:0.15*height - 4}}>
                             <Text style={speedLayout.numbers}>
-                                {duration}
+                                {(distance/(positions.length - 1)).toFixed(2)}
                             </Text>
                             <Text style={speedLayout.coloredRedspeed}>
                                 CURRENT SPEED
