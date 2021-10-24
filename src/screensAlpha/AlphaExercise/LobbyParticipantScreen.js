@@ -60,8 +60,66 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     const [selfStatus, setSelfStatus] = useState("request");
     const [gameStatus, setgameStatus] = useState("request");
-    const[allowBack,setAllowBack]=useState(false)
+    const[allowBackState,setAllowBackState]=useState(0);
 
+
+    useEffect(() => {
+
+        if(allowBackState===0){
+            console.log("no back")
+        }
+        if(allowBackState===1){
+            console.log("back pressed")
+            Alert.alert(
+                "Leave Race",
+                "Are you sure you want to leave the race? You will not be able to return unless the owner reinvites you.",
+                [ { text:"Cancel", onPress: () => {
+                    setAllowBackState(0);
+                } }, 
+                { text:"Confirm", onPress: () => {
+                    declineInvite()
+                    setAllowBackState(2);
+                } }]
+            )
+        }
+        if(allowBackState===2){
+            console.log("Confirm Decline Invite")
+            navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
+        }
+        if(allowBackState===3){
+            Alert.alert(
+                "Cancelled",
+                "Owner has Cancelled the Race.",
+                [ { text:"Understood", onPress: () => {
+                    setAllowBackState(2);
+                } }, ]
+            )
+            
+        }
+        if(allowBackState===4){
+            console.log("gameStarted")
+            navigation.navigate("AlphaTimeRace", {mode: "Time"})
+            
+        }
+        if(allowBackState===5){
+            console.log("user Pressed Decline")
+            Alert.alert(
+                "Decline Race",
+                "Are you sure you want to decline? You won't be able to return unless the owner reinvites you",
+                [ { text:"Cancel", onPress: () => {
+                    setAllowBackState(0);
+                } }, 
+                { text:"Confirm", onPress: () => {
+                    declineInvite()
+                    setAllowBackState(2);
+                } }]
+            )
+            
+        }
+
+
+
+    }, [allowBackState])
     
     /**
      * This is a helper method to filter the user based on uid from the search results.
@@ -73,7 +131,8 @@ const LobbyParticipantScreen = ({navigation, route}) => {
         return !(uid === selfID);
     }
     useEffect(() => {
-        if(selfStatus===gameStatus){
+        if(selfStatus==="accept"&&gameStatus==="accept"){
+            setAllowBackState(4);
             console.log('STARTTTTTTTTTTTTTT NOW GAMEEEEEEE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
         }
         return () => {
@@ -141,12 +200,12 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                     if(userList.length!=0){
                         if(!userList.some(item=>item.uid===selfID )){
                             console.log("KICKEDOUT")
-                            setAllowBack(true)
+                            setAllowBackState(3)
                             setSelfStatus("request")
                         }
                         if(!userList.some(item=>item.uid===organiserID )){
                             console.log("KICKEDOUT")
-                            setAllowBack(true)
+                            setAllowBackState(3)
                             setSelfStatus("request")
                         }
                     }
@@ -177,7 +236,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                     setRaceParam(settings[0].raceType);
                     if( settings[0].status=="start"){
                         console.log('STARTTTTTTTTT STATUSSSSSSSSSS#############################################################################################################################################################################')
-                        setgameStatus("start");
+                        setgameStatus("accept");
 
                     }
                 },
@@ -200,20 +259,9 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     useEffect(() => {
         const back = navigation.addListener('beforeRemove', (e) => {
-            if (!allowBack) {
+            if (allowBackState===0) {
                 e.preventDefault();
-                Alert.alert(
-                    "Leave Race",
-                    "Are you sure you want to leave the race? You will not be able to return.",
-                    [ { text:"Cancel", onPress: () => {} }, 
-                    { text:"Confirm", onPress: () => {
-                        //setAllowBack(true);
-                        declineInvite()
-                        navigation.dispatch(e.data.action);
-                    } }]
-                )
-            }else if(allowBack){
-                navigation.dispatch(e.data.action);
+                setAllowBackState(1);
             }
         });
         return back;
@@ -223,16 +271,6 @@ const LobbyParticipantScreen = ({navigation, route}) => {
         // }
     } )
 
-    useEffect(() => {
-        if(allowBack){
-            navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'AppTab'}],}),);
-            //setAllowBack(false)
-        }
-        return () => {
-            setAllowBack(false)
-            console.log("allowBack ID Unmounted") // This worked for me
-          };
-    }, [allowBack])
 
 
 
@@ -285,7 +323,6 @@ const LobbyParticipantScreen = ({navigation, route}) => {
 
     const declineInvite=()=>{
         Firestore.db_declineRequestFriendtoGame( organiserID);
-        //setAllowBack(true);
        
     }
 
@@ -417,7 +454,7 @@ const LobbyParticipantScreen = ({navigation, route}) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
                         setSelfStatus("decline")
-                        declineInvite()
+                        setAllowBackState(5)
                         //setChooseState(true) 
                         //navigation.navigate("RunScreenAlpha", {mode: "Space"})
                     }}>

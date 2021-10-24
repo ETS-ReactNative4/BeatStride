@@ -10,7 +10,7 @@ const {width, height} = Dimensions.get("window")
  * @author NTU CZ2006 Team Alpha
  */
 const AlphaRunMapTimeRace = (props) => {
-    const item=props.item;
+
     const runStatus = props.runStatus;
     const mapPositions = props.mapPositions;
     const currCoord = props.currCoord;
@@ -70,46 +70,6 @@ const AlphaRunMapTimeRace = (props) => {
                 
                 >
 
-                {
-                    ((item.polygonUserIsIn!=null && (item.mode=="Space"))?(
-
-                        <Polygon
-                        coordinates={item.polygonUserIsIn,[...item.polygonUserIsIn]}
-                        fillColor={"rgba(0, 200, 0, 0.5)"}
-                        strokeColor="rgba(0,0,0,0.5)"
-                        strokeWidth={2}
-                        />
-
-                    )
-                    
-                    
-                    
-                    :
-                    <></>)
-                }
-                {
-                    ((item.polygonUserIsIn!=null && (item.mode=="Space"))?(
-
-                        <Polygon
-                        coordinates={[
-                            {latitude:item.polygonUserIsIn[0].latitude-0.0003, longitude:item.polygonUserIsIn[0].longitude-0.0003},
-                            {latitude:item.polygonUserIsIn[1].latitude+0.0003, longitude:item.polygonUserIsIn[1].longitude-0.0003},
-                            {latitude:item.polygonUserIsIn[2].latitude+0.0003, longitude:item.polygonUserIsIn[2].longitude+0.0003},
-                            {latitude:item.polygonUserIsIn[3].latitude-0.0003, longitude:item.polygonUserIsIn[3].longitude+0.0003},
-                            
-                            ]}
-                        fillColor={"rgba(0, 0, 200, 0.5)"}
-                        strokeColor="rgba(0,0,0,0.5)"
-                        strokeWidth={2}
-                        />
-
-                    )
-                    
-                    
-                    
-                    :
-                    <></>)
-                }
                 <Polyline
                     coordinates={mapPositions}
                     strokeWidth={5}

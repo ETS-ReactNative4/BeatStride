@@ -67,6 +67,9 @@ const RunTab = (props) => {
     const polygonUserIsIn=props.polygonUserIsIn;
     const polygonUserIsInName=props.polygonUserIsInName;
 
+    const setPolygonUserIsIn=props.setPolygonUserIsIn;
+    const setPolygonUserIsInName=props.setPolygonUserIsInName;
+
     //For Game Invite
     const [friendList , setFriendList] = useState([]);
     const [empty, setEmpty]= useState(true);
@@ -193,6 +196,7 @@ const RunTab = (props) => {
             //setPositions( [{latitude: latitude, longitude: longitude}] );
             setCurrCoord( {latitude: latitude, longitude: longitude} );
             props.setCurrCoord( {latitude: latitude, longitude: longitude} );
+            
         } catch (error) {
             console.log(error)
         }
@@ -326,10 +330,14 @@ const RunTab = (props) => {
             translation.value=withTiming(width * 0.425,{
                 duration:400
             });
-        }else {
+        }else if(!(typeList[typeListIdx].name==='TIME')) {
             translation.value=withTiming(0,{
                 duration:400
             });
+        }else if(typeList[typeListIdx].name==='SPACE'){
+            // setPolygonUserIsIn([]);
+            // setPolygonUserIsInName("");
+
         }
         
     }, [empty, typeListIdx,organiserUserData])
@@ -384,6 +392,12 @@ const RunTab = (props) => {
                     audioList={audioList}
                     audioListIdx={audioListIdx}
                     setAudioListIdx={(listIdx)=>setAudioListIdx(listIdx)}
+
+                    polygonUserIsIn={polygonUserIsIn}
+                    setPolygonUserIsIn={(poly)=>{setPolygonUserIsIn(poly)}}
+                    polygonUserIsInName={polygonUserIsInName}
+                    setPolygonUserIsInName={(name)=>{setPolygonUserIsInName(name)}}
+                    
                 
                 />
                 <View style={styles.startButton}>
