@@ -101,11 +101,11 @@ const AlphaExerciseScreen = () => {
     useEffect(() => {
         // !(parkList[0].hasOwnProperty('distance'))
         
-        console.log("parkList: "+parkList.length);
-        console.log(parkList);
+        //console.log("parkList: "+parkList.length);
+        //console.log(parkList);
         for(var i = 0; i < parkList.length; i++) {
             var obj = parkList[i];
-            console.log(obj.name+" "+parkList[i]["polygon"]);
+            //console.log(obj.name+" "+parkList[i]["polygon"]);
             isCoordinParkListPolygon(parkList[i].polygon, parkList[i].name);
         }
          
@@ -113,7 +113,7 @@ const AlphaExerciseScreen = () => {
     }, [parkList])
 
     const isCoordinParkListPolygon = (polygon, name) => { 
-        console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
+        //console.log("oMKAR:" + geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon));
         if(geolib.isPointInPolygon({latitude: currCoord.latitude, longitude: currCoord.longitude}, polygon)){
             // if through setPolygonUserIsIn(polygon)
             setPolygonUserIsIn(polygon);
@@ -135,7 +135,7 @@ const AlphaExerciseScreen = () => {
             const urlPlaces  = 'https://maps.googleapis.com/maps/api/place/photo?'
             const maxwidthPlaces = `maxwidth=400`;
             const keyPlaces = `&key=AIzaSyADjrNgTK8R1JckFVwOmIRhJvPCO-hZjRQ`;
-            console.log(parkSearchUrl);
+            //console.log(parkSearchUrl);
             fetch(parkSearchUrl)
             .then(response => response.json())
             .then(result =>{
