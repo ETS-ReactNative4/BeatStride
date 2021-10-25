@@ -607,11 +607,11 @@ const AlphaSpaceRace = ({navigation, route}) => {
                             TIME
                         </Text>
                     </View>
-                    <Text style={textStyle.distanceDisplay}>
+                    <View style={textStyle.distanceDisplay}>
                         <AlphaRunDistance
                             distance={distance}
                         />
-                    </Text>
+                    </View>
                     <Separator />
                     <View>
                         <Text style={textStyle.coloredRed}>
@@ -783,9 +783,13 @@ const textStyle = StyleSheet.create({
   distanceDisplay: {
     textAlign: 'center',
     fontSize: 100,
-    height: 0.2*height - 4,
-    color: 'white'
+    height: 0.17*height - 4,
+    color: 'white',
+    //backgroundColor:'brown',
+    justifyContent:'center',
+    alignContent:'center',
   },
+
 
   speedDisplay: {
     fontSize:0.0625*height,

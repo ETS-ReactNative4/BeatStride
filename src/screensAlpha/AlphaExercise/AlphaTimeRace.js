@@ -192,7 +192,7 @@ const AlphaTimeRace = ({navigation, route}) => {
                 TTS.getInitStatus().then(() => {
                     TTS.setDefaultLanguage('en-US');
                     // TTS.setDefaultRate(0.5);
-                    TTS.speak('over Taken. New Position '+newRunnerPositions[selfID]+1);
+                    TTS.speak('over Taken. New Position '+(newRunnerPositions[selfID]+1));
                 });                    
                 setOldPosition(newRunnerPositions[selfID])
             }else if(newRunnerPositions[selfID]<oldPosition){
@@ -206,7 +206,7 @@ const AlphaTimeRace = ({navigation, route}) => {
                     TTS.getInitStatus().then(() => {
                         TTS.setDefaultLanguage('en-US');
                         // TTS.setDefaultRate(0.5);
-                        TTS.speak('New Position '+newRunnerPositions[selfID]+1);
+                        TTS.speak('New Position '+(newRunnerPositions[selfID]+1));
                     });
                 }
 
@@ -804,11 +804,11 @@ const AlphaTimeRace = ({navigation, route}) => {
                             TIME
                         </Text>
                     </View>
-                    <Text style={textStyle.distanceDisplay}>
+                    <View style={textStyle.distanceDisplay}>
                         <AlphaRunDistance
                             distance={distance}
                         />
-                    </Text>
+                    </View>
                     <Separator />
                     <View>
                         <Text style={textStyle.coloredRed}>
@@ -1021,21 +1021,26 @@ const textStyle = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     height: 0.05*height - 4,
-    fontSize:18
+    fontSize:18,
+    //backgroundColor:'blue'
   },
 
   timeDisplay: {
     textAlign:'center',
-    height: 0.1*height - 4,
+    height: 0.13*height - 4,
     fontSize: 80,
-    color: 'white'
+    color: 'white',
+    //backgroundColor:'pink',
   },
 
   distanceDisplay: {
     textAlign: 'center',
     fontSize: 100,
-    height: 0.2*height - 4,
-    color: 'white'
+    height: 0.17*height - 4,
+    color: 'white',
+    //backgroundColor:'brown',
+    justifyContent:'center',
+    alignContent:'center',
   },
 
   speedDisplay: {

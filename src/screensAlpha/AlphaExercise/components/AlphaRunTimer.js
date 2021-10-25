@@ -127,7 +127,7 @@ const AlphaRunTimer = (props) => {
 
 const styles = StyleSheet.create({
     componentContainer:{
-        height: height * 0.1,
+        height: height * 0.15,
         justifyContent: 'center',
         alignItems: 'center',
     },

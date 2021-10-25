@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     },
     nameContainer:{
         height: (itemHeight-4)/2,
-        width: width * 0.3 - (height * 0.08),
+        width: width * 0.2,
         justifyContent: 'center',
         alignItems: 'flex-start',
         //backgroundColor: 'green',
