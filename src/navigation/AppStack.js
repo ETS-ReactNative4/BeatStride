@@ -40,6 +40,12 @@ import LobbyOrganiserScreen from '../screensAlpha/AlphaExercise/LobbyOrganiserSc
 import LobbyOrganiserScreen2 from '../screensAlpha/AlphaExercise/LobbyOrganiserScreen2';
 import LobbyParticipantScreen from '../screensAlpha/AlphaExercise/LobbyParticipantScreen';
 
+//Disable warnings
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
+
 const {width, height} = Dimensions.get("window")
 
 const Stack = createStackNavigator();

@@ -13,6 +13,11 @@ import AlphaExerciseScreen from '../screensAlpha/AlphaExercise/AlphaExerciseScre
 import AlphaMeScreen from '../screensAlpha/AlphaMe/AlphaMeScreen';
 import AlphaSocialsScreen from '../screensAlpha/AlphaSocials/AlphaSocialsScreen';
 
+//Disable warnings
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 
 const {width, height} = Dimensions.get("window")
 
