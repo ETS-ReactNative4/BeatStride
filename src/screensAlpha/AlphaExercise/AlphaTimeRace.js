@@ -1027,7 +1027,7 @@ const textStyle = StyleSheet.create({
 
   timeDisplay: {
     textAlign:'center',
-    height: 0.13*height - 4,
+    height: 0.1*height - 4,
     fontSize: 80,
     color: 'white',
     //backgroundColor:'pink',
@@ -1036,7 +1036,7 @@ const textStyle = StyleSheet.create({
   distanceDisplay: {
     textAlign: 'center',
     fontSize: 100,
-    height: 0.17*height - 4,
+    height: 0.2*height - 4,
     color: 'white',
     //backgroundColor:'brown',
     justifyContent:'center',

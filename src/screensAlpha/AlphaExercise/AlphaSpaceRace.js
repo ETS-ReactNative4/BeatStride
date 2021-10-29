@@ -783,11 +783,11 @@ const textStyle = StyleSheet.create({
   distanceDisplay: {
     textAlign: 'center',
     fontSize: 100,
-    height: 0.17*height - 4,
+    height: 0.2*height - 4,
     color: 'white',
     //backgroundColor:'brown',
-    justifyContent:'center',
-    alignContent:'center',
+    // justifyContent:'center',
+    // alignContent:'center',
   },
 
 

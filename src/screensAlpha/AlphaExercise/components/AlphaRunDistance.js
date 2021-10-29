@@ -13,8 +13,8 @@ const AlphaRunDistance = (props) => {
     const distance = props.distance
 
     return (
-        <View >
-            <Text numberOfLines={1} style={{...styles.distanceDisplay,textAlign:'center',textAlignVertical:'center',}}>{(distance / 1000).toFixed(2)}</Text>
+        <View style={styles.distanceDisplay}>
+            <Text numberOfLines={1} style={styles.distanceDisplay}>{(distance / 1000).toFixed(2)}</Text>
         </View>
     );
 };
@@ -22,12 +22,12 @@ const AlphaRunDistance = (props) => {
 const styles = StyleSheet.create({
     distanceDisplay: {
         textAlign: 'center',
-        fontSize: 80,
+        fontSize: 100,
         color: 'white',
         //backgroundColor:'yellow',
-        height:height*0.17,
-        textAlign:'center',
-        textAlignVertical:'center',
+        // height:height*0.17,
+        // textAlign:'center',
+        // textAlignVertical:'center',
     },
     componentContainer:{
         height: height * 0.1,

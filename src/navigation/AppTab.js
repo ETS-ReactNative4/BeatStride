@@ -106,7 +106,7 @@ const AppTab = () => {
                     )
                 }}
             />
-            <Tab.Screen 
+            {/* <Tab.Screen 
                 name="ExerciseScreen" 
                 component={ExerciseScreen}
                 options={{
@@ -194,7 +194,7 @@ const AppTab = () => {
                         </View>
                     )
                 }}
-            />
+            /> */}
         </Tab.Navigator>
     )
 }
