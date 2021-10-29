@@ -21,6 +21,7 @@ const DistanceItem = (props) => {
     const [userData, setUserData] = useState({}); 
     const pressUid = props.pressuid;
     const setPressuid = props.setPressuid;
+    const position = props.position;
     
     //console.log(defaultDisplayPicture+" number  ../../../assets/icons/DefaultProfile/pfp"+ num) 
  
@@ -54,8 +55,8 @@ const DistanceItem = (props) => {
                         <Image style={{...styles.pictureContainer,borderColor:uid==pressUid?"red" : "black",borderWidth:uid==pressUid ? 2 : 0 }} source={displayPicture} /> 
                     } 
                 </View> 
-                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "red",borderRadius:height}}> 
-                    <Image style={{flex: 1,resizeMode: 'contain',width: width * 0.05,aspectRatio: 1,borderRadius:height}} source={displayPicture}/> 
+                <View style={{...styles.notifyDot, backgroundColor: empty ? "transparent" : "blue",borderRadius:height}}> 
+                    <Text  style={styles.nameText}>{position}</Text>
                 </View> 
                  
                 {/* Data Container */} 

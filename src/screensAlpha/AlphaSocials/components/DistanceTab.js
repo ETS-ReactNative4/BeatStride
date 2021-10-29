@@ -23,6 +23,8 @@ export default function DistancePage({ type }) {
     const [friendData, setFriendData] = useState([]);
     const [uid, setuid] = useState("");
     const [pressuid, setPressuid] = useState("");
+    const [position, setPosition] = useState(0);
+    const [myPosition, setMyPosition] = useState(0);
     console.log("Type in distancePage " + type)
     console.log(uid)
 
@@ -43,6 +45,7 @@ export default function DistancePage({ type }) {
                 setTotalDistance(userData.totalDistance)
                 setTotalRuns(userData.runCount)
                 setuid(userData.uid)
+                setPosition(0)
             },
             (error) => { console.log(error) },
         )
@@ -69,6 +72,7 @@ export default function DistancePage({ type }) {
         for (var i = 0; i < friendList.length; i++) {
             uidList[i] = friendList[i].uid;
         }
+        uidList[friendList.length] = uid;
 
         console.log("uidList = " + uidList);
         console.log(friendList)
@@ -90,19 +94,42 @@ export default function DistancePage({ type }) {
                 for (var i = 0; i < friendData.length; i++) {
                     console.log("friend_displayName = " + friendData[i].displayName);
                     console.log("friend_longestDistance = " + friendData[i].longestDistance);
+                    friendData[i].position = i+1;
+                    console.log("friend_position = " + friendData[i].position);
+                    if(friendData[i].uid == uid)
+                    {
+                        setMyPosition(friendData[i].position);
+                    }
+
                 }
             } else if (type == 2) {
                 console.log("friendData = " + friendData.sort((a, b) => (a.fastestPace > b.fastestPace) ? 1 : -1));
                 for (var i = 0; i < friendData.length; i++) {
                     console.log("friend_displayName = " + friendData[i].displayName);
                     console.log("friend_fastestPace = " + friendData[i].fastestPace);
+                    friendData[i].position = i+1;
+                    console.log("friend_position = " + friendData[i].position);
+                    if(friendData[i].uid == uid)
+                    {
+                        setMyPosition(friendData[i].position);
+                    }
+
                 }
+
             }  else if (type == 3) {
                 console.log("friendData = " + friendData.sort((a, b) => (a.runCount < b.runCount) ? 1 : -1));
                 for (var i = 0; i < friendData.length; i++) {
                     console.log("friend_displayName = " + friendData[i].displayName);
                     console.log("friend_runCount = " + friendData[i].runCount);
+                    friendData[i].position = i+1;
+                    console.log("friend_position = " + friendData[i].position);
+                    if(friendData[i].uid == uid)
+                    {
+                        setMyPosition(friendData[i].position);
+                    }
+
                 }
+               
             }
             else {
                 console.log("Nothing to display");
@@ -129,23 +156,31 @@ export default function DistancePage({ type }) {
         <View style={styles.container}>
             <View style={styles.friendlist}>
                 <View style={styles.myProfile}>
-                    <TouchableOpacity style={styles.profilePicContainer} onPress={() => { setPressuid(uid) }}>
-                        {(displayPicture.uri != "") &&
-                            <Image style={styles.profilePicContainer} source={displayPicture} />
-                        }
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={() => {setPressuid(uid)}}> 
+                    <View > 
+                        <View> 
+                            { (displayPicture.uri != "") && 
+                                  <Image style={styles.profilePicContainer} source={displayPicture} />
+                            } 
+                        </View> 
+                        <View style={{...styles.notifyDot, backgroundColor: "blue",borderRadius:height}}> 
+                            <Text  style={styles.nameText}>{myPosition}</Text>
+                        </View> 
+                        </View> 
+                </TouchableOpacity> 
                 </View>
                 <View style={{ width: width - height * 0.1, height: height * 0.145, flexDirection: 'row' }}>
                     <FlatList
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         style={styles.list2}
-                        data={friendData}
+                        data={friendData.filter((userData) => {return !(uid === userData.uid)})}
                         extraData={friendData}
                         keyExtractor={item => item.uid}
                         renderItem={({ item }) => <DistanceItem item={item}
                             pressuid={pressuid}
                             setPressuid={(uid) => { setPressuid(uid) }}
+                            position = {item.position}
                         />}
                         ListEmptyComponent={
                             <View style={styles.emptyList}>
@@ -240,4 +275,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: height * 0.01,
     },
+    notifyDot:{ 
+        position: 'absolute', 
+        top: width * 0.01, 
+        right: width * 0.01, 
+        width: width * 0.05, 
+        aspectRatio: 1, 
+        borderRadius: width, 
+        resizeMode:'contain' 
+ 
+    }, 
+    nameText:{ 
+        fontWeight: 'bold', 
+        fontSize: 12, 
+        color: '#FFFFFF', 
+        textAlign:'center', 
+ 
+    }, 
 })
